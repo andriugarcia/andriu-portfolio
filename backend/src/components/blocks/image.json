@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_blocks_images",
+  "info": {
+    "displayName": "image",
+    "icon": "border-all",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "fullPicture": {
+      "type": "boolean"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "square",
+        "tall",
+        "wide"
+      ]
+    }
+  }
+}

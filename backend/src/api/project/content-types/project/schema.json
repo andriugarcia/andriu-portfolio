@@ -1,0 +1,90 @@
+{
+  "kind": "collectionType",
+  "collectionName": "projects",
+  "info": {
+    "singularName": "project",
+    "pluralName": "projects",
+    "displayName": "Project",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::author.author",
+      "inversedBy": "projects"
+    },
+    "logo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "grid.logo"
+    },
+    "portraitImages": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grid.portrait-image"
+    },
+    "landscapeImages": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grid.landscape-image"
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::project-category.project-category",
+      "inversedBy": "projects"
+    },
+    "relevance": {
+      "type": "integer",
+      "max": 10,
+      "min": 0,
+      "default": 0
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "section.section-name",
+        "shared.media",
+        "shared.quote",
+        "shared.rich-text",
+        "shared.seo",
+        "shared.slider",
+        "shared.video",
+        "shared.external"
+      ]
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "showcase": {
+      "type": "dynamiczone",
+      "components": [
+        "blocks.image",
+        "blocks.info",
+        "blocks.video"
+      ]
+    },
+    "technologies": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::technology.technology",
+      "mappedBy": "projects"
+    },
+    "color": {
+      "type": "string",
+      "default": "#FFFFFF"
+    },
+    "secondaryColor": {
+      "type": "string",
+      "default": "#000000"
+    }
+  }
+}

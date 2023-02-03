@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_grid_portrait_images",
+  "info": {
+    "displayName": "portrait-image",
+    "icon": "clone"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

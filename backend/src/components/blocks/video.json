@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_blocks_videos",
+  "info": {
+    "displayName": "video",
+    "icon": "border-all"
+  },
+  "options": {},
+  "attributes": {
+    "url": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "square",
+        "tall",
+        "wide"
+      ]
+    }
+  }
+}

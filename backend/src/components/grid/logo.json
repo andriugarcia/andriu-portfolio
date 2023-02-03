@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_grid_logos",
+  "info": {
+    "displayName": "Logo",
+    "icon": "heart"
+  },
+  "options": {},
+  "attributes": {
+    "logo": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "backgroundColor": {
+      "type": "string"
+    }
+  }
+}

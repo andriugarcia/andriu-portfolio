@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_grid_icons",
+  "info": {
+    "displayName": "Icon",
+    "icon": "certificate"
+  },
+  "options": {},
+  "attributes": {
+    "fontAwesomeName": {
+      "type": "string"
+    },
+    "hexColor": {
+      "type": "string"
+    }
+  }
+}

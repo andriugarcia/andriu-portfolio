@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_blocks_infos",
+  "info": {
+    "displayName": "info",
+    "icon": "text-height"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "richtext"
+    },
+    "color": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    }
+  }
+}
