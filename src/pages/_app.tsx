@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import { League_Spartan } from '@next/font/google'
-const league = League_Spartan({ subsets: ['latin'] })
+const league = League_Spartan({ subsets: ['latin'], variable: '--font-league-spartan' })
 
 import type { AppProps } from 'next/app'
 import "@fortawesome/fontawesome-svg-core/styles.css"; 
@@ -28,45 +28,34 @@ import { useEffect, useState } from 'react'
 import { fetchAPI, getStrapiURL } from '@/api/api'
 import App from 'next/app'
 import { getStrapiMedia } from '@/api/media'
+import { log } from 'console'
 
 config.autoAddCss = false;
-
-// const projects = {
-//   'olimaps': {
-//       name: 'olimaps',
-//       color: '#FF0054',
-//       secondaryColor: '#400015'
-//     },
-//     'pantala': {
-//       name: 'pantala',
-//       color: '#1c1c1c',
-//       secondaryColor: '#FEFEFE'
-//     },
-//     'kanuki': {
-//       name: 'kanuki',
-//       color: '#0054ff',
-//       secondaryColor: '#400015'
-//   },
-// }
 
 function MyApp({ Component, pageProps, projects }) {
   const [backgroundColor, setBackgroundColor] = useState("")
   const [color, setColor] = useState("")
+  const [scrollbarStyle, setScrollbarStyle] = useState({ "--background-color": "#FFF", "--color": "#000" } as React.CSSProperties)
+
+  const [onTransition, setTransition] = useState(true)
 
   const router = useRouter() 
 
-  const project = projects[router.query.project]
-  
+  let project = null
 
-  console.log(backgroundColor, color);
+  if (router.pathname !== '/' && router.pathname !== '/404') {
+    project = projects.find((p => p.attributes.title.toLowerCase() === router.query.project)).attributes
+  }
+
 
   useEffect(() => {
     console.log("USEEFFECT");
+
+    setTransition(true)
     
-    setBackgroundColor(project?.color || "#000000")
-    setColor(project?.secondaryColor || "#FFFFFF")
-    
-    console.log("Changing color", backgroundColor);
+    setBackgroundColor(project?.color || "#FFFCF6")
+    setColor(project?.secondaryColor || "#1F1B20")
+    setScrollbarStyle({ "--background-color": project?.secondaryColor, "--color": project?.color, backgroundColor: project?.color } as React.CSSProperties)
 
     gsap.fromTo('.title-char', {
       yPercent: 110
@@ -74,7 +63,7 @@ function MyApp({ Component, pageProps, projects }) {
       yPercent: 0,
       duration: 1,
       stagger: 0.05,
-      expo: 'Expo.easeInOut',
+      ease: 'Expo.easeInOut',
     })
 
     gsap.fromTo('.highlight', {
@@ -82,39 +71,47 @@ function MyApp({ Component, pageProps, projects }) {
     }, {
       y: 0,
       duration: 1,
-      expo: 'Expo.easeInOut',
+      ease: 'Expo.easeInOut',
       stagger: 0.10
     })
 
     const blinkingElements = gsap.utils.toArray("section img, section video")
 
-    blinkingElements.forEach(el => {
-      gsap.from(el, {
-        scrollTrigger: {
-          start: 'top bottom',
-          end: 'bottom top',
-          trigger: el,
-          toggleClass: 'blink'
-        }
-      });
-    }, [router.asPath]);
-    })
+    // blinkingElements.forEach(el => {
+    //   gsap.from(el, {
+    //     scrollTrigger: {
+    //       start: 'top bottom',
+    //       end: 'bottom top',
+    //       trigger: el,
+    //       toggleClass: 'blink'
+    //     }
+    //   });
+    // });
+    }, [router.asPath])
   
 
   function goToProject(project) {
   
     if(typeof window !== 'undefined') {
-      setBackgroundColor(project.attributes.color)
-      setColor(project.attributes.secondaryColor)
 
-      console.log("Changing color ON CLICK", name,);
+      document.getElementById("#scrollarea")?.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
+
+      const path = '/' + project.attributes.title.replaceAll(" ", "").toLowerCase()
+
+      router.prefetch(path)
+
+      setTransition(true)
 
       gsap.fromTo('.highlight', {
         y: 0
       }, {
         y: '-100vh',
         duration: 1,
-        expo: 'Expo.easeInOut',
+        ease: 'Expo.easeInOut',
         stagger: 0.10
       })
 
@@ -123,35 +120,35 @@ function MyApp({ Component, pageProps, projects }) {
       }, {
         yPercent: 110,
         duration: 1,
-        expo: 'Expo.easeInOut',
+        ease: 'Expo.easeInOut',
         stagger: 0.05,
-        onComplete: () => router.push('/' + project.attributes.title.replaceAll(" ", "").toLowerCase())
+        onComplete: () => router.push(path)
       })
     }
   }
   return (
     <>
-      <div className={`crt h-[100vh] p-10 ${league.className} flex justify-center`} style={{ backgroundColor }}>
-        <div className='relative h-full w-full max-w-screen-2xl border-8' style={{ borderColor: color }}>
+      <div className={`crt h-[100vh] p-10 ${league.variable} flex justify-center`} style={ scrollbarStyle }>
+        <div className='relative h-full w-full border-8' style={{ borderColor: color, maxWidth: 1273 }}>
           <div className="absolute top-0 left-0 right-0 h-20 border-b-8 flex items-center justify-between" style={{ borderColor: color }}>
-          <h2 style={{color: color, marginLeft: '132px'}} className='font-black text-4xl'>ANDRIU GARCIA</h2>
+          <h2 style={{color: color, marginLeft: '132px'}} className='font-black text-4xl flex overflow-hidden'>ANDRIU GARCIA {project ? <div className='navbarProjectTitle' >x {project.title.toUpperCase()}</div> : ''}</h2>
           <div className='mr-10 flex gap-3'>
-            <a href="/resume" style={{ color: color }}>RESUME</a>
-            <a href="/projects" style={{ color: color }}>PROJECTS</a>
-            <a href="/contact" style={{ color: color }}>CONTACT</a>
+            <a href="/resume" className="font-mono" style={{ color: color }}>RESUME</a>
+            <a href="/projects" className="font-mono" style={{ color: color }}>PROJECTS</a>
+            <a href="/contact" className="font-mono" style={{ color: color }}>CONTACT</a>
           </div>
           </div>
-          <div className="absolute top-0 bottom-0 left-0 w-20 border-r-8 flex flex-col justify-center items-center" style={{ borderColor: color }}>
+          <div className="absolute top-0 bottom-0 left-0 mt-[80px] w-20 border-r-8 flex flex-col gap-y-10 justify-center items-center" style={{ borderColor: color }}>
+            <div className='absolute w-full h-16 top-[50%]' style={{ backgroundColor: color, transform: "translateY(-50%)" }}></div>
             <FontAwesomeIcon
               icon={faChevronUp}
-              className="absolute top-[100px]"
+              className="absolute top-[20px]"
               style={{ fontSize: 36, color: color }}
             />
             {
-              Object.values(projects).map(project => {
-                console.log(project);
+              Object.values(projects).map(item => {
                 
-                return <img src={getStrapiURL(project.attributes.logo?.logo.url)} onClick={() => goToProject(project)} className='w-10 h-10 bg-white mb-2'></img>
+                return <img src={getStrapiURL(item.attributes.logo?.logo.data.attributes.url)} onClick={() => goToProject(item)} className='w-10 h-10 z-10'></img>
               })
             }
             <FontAwesomeIcon
@@ -161,7 +158,7 @@ function MyApp({ Component, pageProps, projects }) {
             />
           </div>
           <div className="ml-20 mt-20" style={{height: 'calc(100% - 5rem)'}}>
-            <Component {...pageProps} />
+            <Component {...pageProps} onTransition={onTransition} setTransition={setTransition}/>
           </div>
         </div>
       </div>
@@ -170,17 +167,20 @@ function MyApp({ Component, pageProps, projects }) {
   )
 }
 
-export async function getStaticProps() {
-  // Run API calls in parallel
+// export async function getStaticProps() {
+//   // Run API calls in parallel
 
-  return {
-    props: {
-      projects: projectsRes.data,
-    },
-  };
-}
+//   return {
+//     props: {
+//       projects: projectsRes.data,
+//     },
+//   };
+// }
 
 MyApp.getInitialProps = async (ctx) => {
+
+  console.log("GETTING INITIAL PROPS")
+
   // Calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await App.getInitialProps(ctx);
 
@@ -209,6 +209,8 @@ MyApp.getInitialProps = async (ctx) => {
     }
   } })
 ])
+
+  console.log("PROJECTs", projectsRes.data)
 
   // Pass the data to our page via props
   return { ...appProps, pageProps: { global: globalRes.data }, projects: projectsRes.data };

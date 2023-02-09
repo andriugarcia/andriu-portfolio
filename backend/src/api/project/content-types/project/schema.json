@@ -85,6 +85,12 @@
     "secondaryColor": {
       "type": "string",
       "default": "#000000"
+    },
+    "highlights": {
+      "displayName": "highlights",
+      "type": "component",
+      "repeatable": true,
+      "component": "list.highlights"
     }
   }
 }

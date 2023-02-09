@@ -2,7 +2,7 @@ import { getStrapiMedia } from "../api/media";
 import NextImage from "next/image";
 
 const imageStyle = {
-  maxWidth: "1000px"
+  maxWidth: "500px"
 }
 
 const Image = ({ image }) => {

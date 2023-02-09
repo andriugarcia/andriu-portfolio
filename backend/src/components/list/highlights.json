@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_list_highlights",
+  "info": {
+    "displayName": "highlights",
+    "icon": "align-justify"
+  },
+  "options": {},
+  "attributes": {
+    "highlight": {
+      "type": "string"
+    }
+  }
+}

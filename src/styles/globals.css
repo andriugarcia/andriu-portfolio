@@ -179,7 +179,7 @@ a {
     opacity: 0.24387;
   }
 }
-@keyframes textShadow {
+/* @keyframes textShadow {
   0% {
     text-shadow: 0.4389924193300864px 0 1px rgba(0,30,255,0.5), -0.4389924193300864px 0 1px rgba(255,0,80,0.3), 0 0 3px;
   }
@@ -243,7 +243,7 @@ a {
   100% {
     text-shadow: 2.6208764473832513px 0 1px rgba(0,30,255,0.5), -2.6208764473832513px 0 1px rgba(255,0,80,0.3), 0 0 3px;
   }
-}
+} */
 .crt::after {
   content: " ";
   display: block;
@@ -284,6 +284,14 @@ section h1 {
 }
 
 section h2 {
+  margin-top: -.5rem;
+  margin-bottom: 2.5rem;
+  margin-left: -2.5rem;
+  margin-right: -2.5rem;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  /* border-top: 8px solid black;
+  border-bottom: 8px solid black; */
   font-size: 2em;
 }
 
@@ -291,8 +299,44 @@ section p {
   max-width: 65ch;
   text-align: justify;
   font-size: 2vmin;
+  margin-bottom: 24px;
+  animation: none !important;
+  text-shadow: none !important;
 }
 
 .blink {
 
 }
+
+/* ===== Scrollbar CSS ===== */
+  /* Firefox */
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: #e60b4c #2d0117;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 20px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--background-color, yellow);
+    border-left: 6px solid var(--background-color, yellow);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--color, yellow);
+    border-radius: 0px;
+    border: 6px solid var(--background-color, yellow);
+  }
+
+  ::-moz-selection { /* Code for Firefox */
+    color: var(--color, yellow);
+    background: var(--background-color, yellow);
+  }
+  
+  ::selection {
+    color: var(--color, yellow);
+    background: var(--background-color, yellow);
+  }

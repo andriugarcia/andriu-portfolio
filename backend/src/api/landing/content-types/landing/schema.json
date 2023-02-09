@@ -1,0 +1,38 @@
+{
+  "kind": "singleType",
+  "collectionName": "landings",
+  "info": {
+    "singularName": "landing",
+    "pluralName": "landings",
+    "displayName": "Landing",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "spline": {
+      "type": "string"
+    },
+    "latestProject": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::project.project"
+    },
+    "highlights": {
+      "type": "component",
+      "repeatable": true,
+      "component": "list.highlights"
+    },
+    "marquee": {
+      "type": "string"
+    },
+    "color": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    }
+  }
+}

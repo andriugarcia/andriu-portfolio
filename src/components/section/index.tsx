@@ -1,18 +1,21 @@
 import ReactMarkdown from 'react-markdown'
 import { Roboto_Mono } from '@next/font/google'
-const roboto_mono = Roboto_Mono({ subsets: ['latin'] })
+const roboto_mono = Roboto_Mono({ subsets: ['latin'], variable: '--font-roboto-mono' })
 
 import Image from "@/components/image"
+import External from "@/components/section/external"
+import { log } from 'console'
 
 const videoStyle = {}
 
 function renderBlock(type, block, color) {
-    console.log(type, block)
+
+    console.log("type", type)
     switch (type) {
         case "rich-text":
-            return <ReactMarkdown className={roboto_mono.className} children={block.body} style={{color}}></ReactMarkdown>
+            return <ReactMarkdown className={`${roboto_mono.variable} font-mono w-full`} children={block.body} style={{color}}></ReactMarkdown>
         case "external":
-            return <></>
+            return <External color={color} name={block.name} url={block.url} ></External>
         case "media":
             return <Image image={block.file}></Image>
         case "video":
