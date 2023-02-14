@@ -32,21 +32,52 @@ import { log } from 'console'
 
 config.autoAddCss = false;
 
+function mod(value, module) {
+  return ((value % module) + module) % module
+}
+
 function MyApp({ Component, pageProps, projects }) {
   const [backgroundColor, setBackgroundColor] = useState("")
   const [color, setColor] = useState("")
   const [scrollbarStyle, setScrollbarStyle] = useState({ "--background-color": "#FFF", "--color": "#000" } as React.CSSProperties)
 
   const [onTransition, setTransition] = useState(true)
+  const [iconList, setIconList] = useState([])
 
   const router = useRouter() 
 
   let project = null
+  let index = -1
 
   if (router.pathname !== '/' && router.pathname !== '/404') {
-    project = projects.find((p => p.attributes.title.toLowerCase() === router.query.project)).attributes
+    index = projects.findIndex((p => p.attributes.title.toLowerCase() === router.query.project))
+    project = projects[index].attributes
+  } else {
+    project = {
+      color: "#FFFCF6",
+      backgroundColor: "#1F1B20",
+      title: "ANDRIU GARCIA"
+    }
   }
 
+  useEffect(() => {
+    console.log("INDEX", index)
+    if (index !== -1) {
+      const values = Object.values(projects)
+      const length = values.length
+      console.log(mod(index-2, length))
+
+      const list = []
+
+      for(let i = -4; i <= 4; i += 1) {
+        list.push(values[mod(index+i, length)])
+      }
+      
+      setIconList(list)
+
+      console.log("iconList", iconList)
+    }
+  }, [])
 
   useEffect(() => {
     console.log("USEEFFECT");
@@ -88,17 +119,19 @@ function MyApp({ Component, pageProps, projects }) {
     //   });
     // });
     }, [router.asPath])
-  
 
-  function goToProject(project) {
+  function goToProject(project, index) {
+
+    const steps = index - 4
+
+    const iconHeight = document.querySelector(".icon").offsetHeight + 2.5 * parseFloat(getComputedStyle(document.documentElement).fontSize)
+
+    gsap.to(".icon", {
+      y: iconHeight * -steps,
+      duration: 1
+    })
   
     if(typeof window !== 'undefined') {
-
-      document.getElementById("#scrollarea")?.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'smooth'
-      });
 
       const path = '/' + project.attributes.title.replaceAll(" ", "").toLowerCase()
 
@@ -124,14 +157,20 @@ function MyApp({ Component, pageProps, projects }) {
         stagger: 0.05,
         onComplete: () => router.push(path)
       })
+
+      gsap.to(".floatingCard", {
+        right: -250,
+        bottom: -37,
+        rotation: 0,
+      })
     }
   }
   return (
     <>
       <div className={`crt h-[100vh] p-10 ${league.variable} flex justify-center`} style={ scrollbarStyle }>
-        <div className='relative h-full w-full border-8' style={{ borderColor: color, maxWidth: 1273 }}>
-          <div className="absolute top-0 left-0 right-0 h-20 border-b-8 flex items-center justify-between" style={{ borderColor: color }}>
-          <h2 style={{color: color, marginLeft: '132px'}} className='font-black text-4xl flex overflow-hidden'>ANDRIU GARCIA {project ? <div className='navbarProjectTitle' >x {project.title.toUpperCase()}</div> : ''}</h2>
+        <div id="terminal" className='relative h-full w-full border-8' style={{ borderColor: color, maxWidth: 1273 }}>
+          <div id="navbar" className="absolute top-0 left-0 right-0 h-20 border-b-8 flex items-center justify-between" style={{ borderColor: color }}>
+          <h2 style={{color: color, marginLeft: '132px'}} className='font-black text-4xl flex overflow-hidden'>ANDRIU GARCIA {project ? <div className='navbarProjectTitle'>x {project.title.toUpperCase()}</div> : ''}</h2>
           <div className='mr-10 flex gap-3'>
             <a href="/resume" className="font-mono" style={{ color: color }}>RESUME</a>
             <a href="/projects" className="font-mono" style={{ color: color }}>PROJECTS</a>
@@ -145,12 +184,15 @@ function MyApp({ Component, pageProps, projects }) {
               className="absolute top-[20px]"
               style={{ fontSize: 36, color: color }}
             />
-            {
-              Object.values(projects).map(item => {
-                
-                return <img src={getStrapiURL(item.attributes.logo?.logo.data.attributes.url)} onClick={() => goToProject(item)} className='w-10 h-10 z-10'></img>
-              })
-            }
+            <div style={{height: "calc(200px + 12.5rem)", width: "100%", clipPath: "inset(0 0 0 0)"}}>
+              <div className='absolute top-0 bottom-0 left-[16px] flex flex-col gap-y-10 justify-center items-center'>
+                {
+                  iconList.map((item, index) => {
+                    return <div className='icon w-10 h-10'><img src={getStrapiURL(item?.attributes?.logo?.logo.data.attributes.url)} onClick={() => goToProject(item, index)} className='w-10 h-10 z-10'></img></div>
+                  })
+                }
+              </div>
+            </div>
             <FontAwesomeIcon
               icon={faChevronDown}
               className="absolute bottom-[20px]"

@@ -72,17 +72,6 @@ export default function Home({project, color, backgroundColor, onTransition, set
     const height = event.currentTarget.clientHeight;
     const barHeight = event.currentTarget.scrollHeight;
     const scrollTop = event.currentTarget.scrollTop;
-
-    gsap.to(".navbarProjectTitle", {
-      yPercent: 110,
-      duration: 1,
-      scrollTrigger: {
-        trigger: ".content",
-        start: 'top bottom',
-        end: 'bottom top',
-
-      }
-    })
     
   };
 

@@ -9,8 +9,6 @@ import { log } from 'console'
 const videoStyle = {}
 
 function renderBlock(type, block, color) {
-
-    console.log("type", type)
     switch (type) {
         case "rich-text":
             return <ReactMarkdown className={`${roboto_mono.variable} font-mono w-full`} children={block.body} style={{color}}></ReactMarkdown>

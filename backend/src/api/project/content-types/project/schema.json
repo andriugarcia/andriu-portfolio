@@ -91,6 +91,9 @@
       "type": "component",
       "repeatable": true,
       "component": "list.highlights"
+    },
+    "description": {
+      "type": "text"
     }
   }
 }

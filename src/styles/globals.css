@@ -340,3 +340,23 @@ section p {
     color: var(--color, yellow);
     background: var(--background-color, yellow);
   }
+
+  .circleText {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  .circleText span {
+    position: absolute;
+    left: 50%;
+    transform-origin: 0 100px;
+  }
+
+  .scrollStatus {
+    transition: left 0.5s ease;
+  }
+
+  .recordingSquare {
+    transition: background-color 0.5s ease;
+  }

@@ -2,7 +2,9 @@ import { getStrapiMedia } from "../api/media";
 import NextImage from "next/image";
 
 const imageStyle = {
-  maxWidth: "500px"
+  // marginLeft: "-2.5rem",
+  // marginRight: "-2.5rem",
+  // width: "auto"
 }
 
 const Image = ({ image }) => {
@@ -11,8 +13,8 @@ const Image = ({ image }) => {
   return (
     <NextImage
       layout="responsive"
-      width={width}
       height={height}
+      width={width}
       objectFit="contain"
       src={getStrapiMedia(image)}
       alt={alternativeText || ""}
