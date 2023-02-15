@@ -385,7 +385,9 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
                   {
                     Object.entries(content).map((section, index) => {
                       return (
-                        <div className='w-[30%] font-bold' style={{ backgroundColor: currentSection.id === index ? color : backgroundColor, color: currentSection.id === index ? backgroundColor : color }}>{index+1 + "   " + section[0].toUpperCase()}</div>
+                        <div className='w-[30%]'>
+                          <div className='font-bold' style={{ backgroundColor: currentSection.id === index ? color : backgroundColor, color: currentSection.id === index ? backgroundColor : color }}>{index+1 + "   " + section[0].toUpperCase()}</div>
+                        </div>
                       )
                     })
                   }

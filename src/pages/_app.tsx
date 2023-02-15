@@ -120,7 +120,13 @@ function MyApp({ Component, pageProps, projects }) {
     // });
     }, [router.asPath])
 
-  function goToProject(project, index) {
+  function goToProject(project, index = -1) {
+
+    if (project === "next") {
+      return
+    } else if (project === "previous") {
+      return
+    }
 
     const steps = index - 4
 
@@ -167,19 +173,26 @@ function MyApp({ Component, pageProps, projects }) {
   }
   return (
     <>
+      <div className='fixed inset-0' style={{  filter: "blur(1px)", backgroundSize: "40px 40px", backgroundImage: `linear-gradient(to right, ${color} 1px, transparent 1px), linear-gradient(to bottom, ${color} 1px, transparent 1px)`}}></div>
       <div className={`crt h-[100vh] p-10 ${league.variable} flex justify-center`} style={ scrollbarStyle }>
-        <div id="terminal" className='relative h-full w-full border-8' style={{ borderColor: color, maxWidth: 1273 }}>
-          <div id="navbar" className="absolute top-0 left-0 right-0 h-20 border-b-8 flex items-center justify-between" style={{ borderColor: color }}>
-          <h2 style={{color: color, marginLeft: '132px'}} className='font-black text-4xl flex overflow-hidden'>ANDRIU GARCIA {project ? <div className='navbarProjectTitle'>x {project.title.toUpperCase()}</div> : ''}</h2>
+        <div id="terminal" className='relative h-full w-full border-8' style={{ borderColor: color, maxWidth: 1273, backgroundColor }}>
+          <div id="navbar" className="absolute top-0 left-0 right-0 h-20 border-b-8 flex items-center justify-start" style={{ borderColor: color }}>
+          
+          <div className='relative h-full aspect-square'>
+            <div className='logo'></div>
+            <div className='absolute inset-0' style={{ backgroundColor: color, mixBlendMode: "multiply" }}></div>
+          </div>
+          <h2 style={{color: color}} className='font-black text-4xl flex overflow-hidden'>ANDRIU GARCIA {project ? <div className='navbarProjectTitle'>x {project.title.toUpperCase()}</div> : ''}</h2>
+          <div className='grow'></div>
           <div className='mr-10 flex gap-3'>
             <a href="/resume" className="font-mono" style={{ color: color }}>RESUME</a>
-            <a href="/projects" className="font-mono" style={{ color: color }}>PROJECTS</a>
             <a href="/contact" className="font-mono" style={{ color: color }}>CONTACT</a>
           </div>
           </div>
           <div className="absolute top-0 bottom-0 left-0 mt-[80px] w-20 border-r-8 flex flex-col gap-y-10 justify-center items-center" style={{ borderColor: color }}>
             <div className='absolute w-full h-16 top-[50%]' style={{ backgroundColor: color, transform: "translateY(-50%)" }}></div>
             <FontAwesomeIcon
+              onClick={() => goToProject("next")}
               icon={faChevronUp}
               className="absolute top-[20px]"
               style={{ fontSize: 36, color: color }}
@@ -194,6 +207,7 @@ function MyApp({ Component, pageProps, projects }) {
               </div>
             </div>
             <FontAwesomeIcon
+              onClick={() => goToProject("previous")}
               icon={faChevronDown}
               className="absolute bottom-[20px]"
               style={{ fontSize: 36, color: color }}
