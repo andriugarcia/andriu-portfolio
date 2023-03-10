@@ -29,11 +29,46 @@ import { fetchAPI, getStrapiURL } from '@/api/api'
 import App from 'next/app'
 import { getStrapiMedia } from '@/api/media'
 import { log } from 'console'
+import hexToFilter from '@/api/color'
+import HoverCard from '@/components/hoverCard'
 
 config.autoAddCss = false;
 
 function mod(value, module) {
   return ((value % module) + module) % module
+}
+
+function overTerminal(e) {
+  // e = Mouse click event.
+  const terminalElement = document.getElementById("terminal")
+  var rect = terminalElement.getBoundingClientRect();
+  var x = e.clientX - rect.left; //x position within the element.
+  var y = e.clientY - rect.top;  //y position within the element.
+
+  const gridmap = document.querySelector(".gridmap")
+
+  // gridmap.style.transform = `rotateX(35deg) translate(${(x / terminalElement.offsetWidth) * 20}px, ${(y / terminalElement.offsetHeight) * 20}px)`
+}
+
+function hoveringElement(el) {
+  console.log("HOVERING", el)
+
+  if (!el.clientY) return
+
+  const hoverElement = document.querySelector<HTMLElement>(".hoverElement")
+  const rect = hoverElement?.getBoundingClientRect()
+  
+  gsap.fromTo(".hoverElement", {
+    top: el.clientY - (el.target.offsetHeight),
+    left: "-50vw"
+  },
+  {
+    top: el.clientY - (el.target.offsetHeight),
+    left: el.clientX - rect?.width - el.target.offsetWidth,
+    duration: 1,
+    ease: "Expo.easeOut"
+  })
+  
 }
 
 function MyApp({ Component, pageProps, projects }) {
@@ -42,6 +77,7 @@ function MyApp({ Component, pageProps, projects }) {
   const [scrollbarStyle, setScrollbarStyle] = useState({ "--background-color": "#FFF", "--color": "#000" } as React.CSSProperties)
 
   const [onTransition, setTransition] = useState(true)
+  const [logoMultiplyColor, setLogoMultiplyColor] = useState("none")
   const [iconList, setIconList] = useState([])
 
   const router = useRouter() 
@@ -61,26 +97,45 @@ function MyApp({ Component, pageProps, projects }) {
   }
 
   useEffect(() => {
-    console.log("INDEX", index)
-    if (index !== -1) {
-      const values = Object.values(projects)
-      const length = values.length
-      console.log(mod(index-2, length))
+    const startingPosition = index !== -1 ? index : 0
 
-      const list = []
+    const values = Object.values(projects)
+    const length = values.length
 
-      for(let i = -4; i <= 4; i += 1) {
-        list.push(values[mod(index+i, length)])
-      }
-      
-      setIconList(list)
+    const list = []
 
-      console.log("iconList", iconList)
+    for(let i = -4; i <= 4; i += 1) {
+      list.push(values[mod(startingPosition+i, length)])
     }
+    
+    setIconList(list)
+
+    gsap.set("#terminal, .gridmap", {
+      rotateX: 90
+    })
+
+    // gsap.fromTo("#terminal", {
+    //   rotateX: 90
+    // },
+    // {
+    //   rotateX: 35,
+    //   duration: 1,
+    //   delay: 1,
+    //   ease: "Back.easeOut",
+    // })
+    // gsap.fromTo(".gridmap", {
+    //   rotateX: 90
+    // },
+    // {
+    //   rotateX: 35,
+    //   duration: 1,
+    //   delay: 1,
+    //   ease: "Expo.easeOut",
+    // })
+
   }, [])
 
   useEffect(() => {
-    console.log("USEEFFECT");
 
     setTransition(true)
     
@@ -106,6 +161,12 @@ function MyApp({ Component, pageProps, projects }) {
       stagger: 0.10
     })
 
+    const filterStyle = hexToFilter(project?.color)
+
+    console.log(filterStyle);
+
+    setLogoMultiplyColor(filterStyle.filter)
+
     const blinkingElements = gsap.utils.toArray("section img, section video")
 
     // blinkingElements.forEach(el => {
@@ -120,15 +181,17 @@ function MyApp({ Component, pageProps, projects }) {
     // });
     }, [router.asPath])
 
-  function goToProject(project, index = -1) {
-
+  function goToProject(project, indexTarget = -1) {
+    if (onTransition) return
     if (project === "next") {
-      return
+      indexTarget = index + 1
+      project = iconList[indexTarget]
     } else if (project === "previous") {
-      return
+      indexTarget = index - 1
+      project = iconList[indexTarget]
     }
 
-    const steps = index - 4
+    const steps = indexTarget - 4
 
     const iconHeight = document.querySelector(".icon").offsetHeight + 2.5 * parseFloat(getComputedStyle(document.documentElement).fontSize)
 
@@ -173,16 +236,42 @@ function MyApp({ Component, pageProps, projects }) {
   }
   return (
     <>
-      <div className='fixed inset-0' style={{  filter: "blur(1px)", backgroundSize: "40px 40px", backgroundImage: `linear-gradient(to right, ${color} 1px, transparent 1px), linear-gradient(to bottom, ${color} 1px, transparent 1px)`}}></div>
-      <div className={`crt h-[100vh] p-10 ${league.variable} flex justify-center`} style={ scrollbarStyle }>
-        <div id="terminal" className='relative h-full w-full border-8' style={{ borderColor: color, maxWidth: 1273, backgroundColor }}>
+      <div className={`crt h-[100vh] p-10 ${league.variable} overflow-hidden flex justify-center`} style={ scrollbarStyle } onMouseMove={(e) => overTerminal(e)}>
+        
+        <div className='gridmap fixed inset-[-500px]' style={{  transform: "rotateX(30deg)", filter: "blur(1px)", backgroundSize: "40px 40px", borderRight: `1px solid ${color}`, backgroundImage: `linear-gradient(to right, ${color} 1px, transparent 1px), linear-gradient(to bottom, ${color} 1px, transparent 1px)`}}></div>
+        {/* <div className='hoverElement fixed w-60 h-20' style={{transform: "rotateX(30deg)", backgroundColor: "red", zIndex: 3000}}></div> */}
+        <FontAwesomeIcon
+          icon={faChevronUp}
+          className="external-arrow-up fixed"
+          style={{ fontSize: 420, color: color, top: "50vh", left: "50vw", opacity: 0, transform: "translate(-50%, -50%) rotateX(35deg)" }}
+        />
+        <FontAwesomeIcon
+          icon={faChevronUp}
+          className="external-arrow-left fixed"
+          style={{ fontSize: 420, color: color, top: "50vh", left: "50vw", opacity: 0, transform: "translate(-50%, -50%) rotate(-45deg) rotateX(35deg)" }}
+        />
+        <FontAwesomeIcon
+          icon={faChevronUp}
+          className="external-arrow-right fixed"
+          style={{ fontSize: 420, color: color, top: "50vh", left: "50vw", opacity: 0, transform: "translate(-50%, -50%) rotate(45deg) rotateX(35deg)" }}
+        />
+
+
+        <div className='fixed top-[50%] left-0 right-0 w-full'>
+        <div className='overflow-hidden text-4xl font-black uppercase flex' style={{ color }}>
+          {
+            "ADDING A NEW PERSPECTIVE TO WEB DEVELOPMENT".split("").map((char: String) => (<div className='title-char'>{char}</div>))
+          }
+        </div>
+        <div className='horizon-line w-full h-2' style={{ backgroundColor: color }}></div>
+        </div>
+
+        <div id="terminal" className='relative h-full w-full border-8' style={{ borderColor: color, maxWidth: 1273, backgroundColor, transform: "rotateX(30deg)" }}>
           <div id="navbar" className="absolute top-0 left-0 right-0 h-20 border-b-8 flex items-center justify-start" style={{ borderColor: color }}>
-          
-          <div className='relative h-full aspect-square'>
-            <div className='logo'></div>
-            <div className='absolute inset-0' style={{ backgroundColor: color, mixBlendMode: "multiply" }}></div>
-          </div>
-          <h2 style={{color: color}} className='font-black text-4xl flex overflow-hidden'>ANDRIU GARCIA {project ? <div className='navbarProjectTitle'>x {project.title.toUpperCase()}</div> : ''}</h2>
+          <Link className='relative h-full aspect-square w-20 border-r-8' href="/" style={{ borderColor: color}}>
+            <div className='logo' style={{filter: logoMultiplyColor }}></div>
+          </Link>
+          <h2 style={{color: color}} className='ml-5 font-black text-4xl flex overflow-hidden'>ANDRIU GARCIA {project && project.title !== "ANDRIU GARCIA" ? <div className='ml-2 navbarProjectTitle'>✕ {project.title.toUpperCase()}</div> : ''}</h2>
           <div className='grow'></div>
           <div className='mr-10 flex gap-3'>
             <a href="/resume" className="font-mono" style={{ color: color }}>RESUME</a>
@@ -190,7 +279,9 @@ function MyApp({ Component, pageProps, projects }) {
           </div>
           </div>
           <div className="absolute top-0 bottom-0 left-0 mt-[80px] w-20 border-r-8 flex flex-col gap-y-10 justify-center items-center" style={{ borderColor: color }}>
-            <div className='absolute w-full h-16 top-[50%]' style={{ backgroundColor: color, transform: "translateY(-50%)" }}></div>
+            {
+              project && project.title !== "ANDRIU GARCIA" ? <div className='absolute w-full h-16 top-[50%]' style={{ backgroundColor: color, transform: "translateY(-50%)" }}></div> : ""
+            }
             <FontAwesomeIcon
               onClick={() => goToProject("next")}
               icon={faChevronUp}
@@ -201,7 +292,9 @@ function MyApp({ Component, pageProps, projects }) {
               <div className='absolute top-0 bottom-0 left-[16px] flex flex-col gap-y-10 justify-center items-center'>
                 {
                   iconList.map((item, index) => {
-                    return <div className='icon w-10 h-10'><img src={getStrapiURL(item?.attributes?.logo?.logo.data.attributes.url)} onClick={() => goToProject(item, index)} className='w-10 h-10 z-10'></img></div>
+                    return (<HoverCard onHover={() => hoveringElement}>
+                      <div className='icon w-10 h-10'><img src={getStrapiURL(item?.attributes?.logo?.logo.data.attributes.url)} onClick={() => goToProject(item, index)} className='w-10 h-10 z-10'></img></div>
+                    </HoverCard>)
                   })
                 }
               </div>
@@ -235,8 +328,6 @@ function MyApp({ Component, pageProps, projects }) {
 
 MyApp.getInitialProps = async (ctx) => {
 
-  console.log("GETTING INITIAL PROPS")
-
   // Calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await App.getInitialProps(ctx);
 
@@ -263,13 +354,12 @@ MyApp.getInitialProps = async (ctx) => {
         icon: "*"
       }
     }
-  } })
+  } }),
 ])
 
-  console.log("PROJECTs", projectsRes.data)
 
   // Pass the data to our page via props
-  return { ...appProps, pageProps: { global: globalRes.data }, projects: projectsRes.data };
+  return { ...appProps, pageProps: { global: globalRes.data }, projects: projectsRes.data};
 };
 
 export default MyApp;

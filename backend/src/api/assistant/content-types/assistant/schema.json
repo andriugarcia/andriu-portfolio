@@ -1,0 +1,22 @@
+{
+  "kind": "singleType",
+  "collectionName": "assistants",
+  "info": {
+    "singularName": "assistant",
+    "pluralName": "assistants",
+    "displayName": "Assistant",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "categories": {
+      "displayName": "category",
+      "type": "component",
+      "repeatable": true,
+      "component": "assistant.category"
+    }
+  }
+}

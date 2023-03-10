@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\" \"cd backend && npm run develop\"",
     "build": "next build && next export",
     "start": "next start",
     "lint": "next lint"
@@ -17,6 +17,7 @@
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
+    "concurrently": "^7.6.0",
     "gsap": "^3.11.4",
     "next": "13.1.6",
     "qs": "^6.11.0",
@@ -24,6 +25,7 @@
     "react-dom": "18.2.0",
     "react-fast-marquee": "^1.3.5",
     "react-markdown": "^8.0.5",
+    "react-typewriter-effect": "^1.1.0",
     "typescript": "4.9.4"
   },
   "devDependencies": {

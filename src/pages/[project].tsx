@@ -76,8 +76,6 @@ export async function getStaticPaths() {
           populate: "*"
         }
       } })
-    
-      console.log("PROJECT", projectsRes.data[0].attributes);
       
       let nextProject = null
       try {
@@ -86,9 +84,6 @@ export async function getStaticPaths() {
       } catch(err) {
         console.error("Next Project not available")
       }
-
-      console.log("NEXTPROJECT", nextProject);
-      
 
     return {
   
@@ -118,6 +113,7 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
     backgroundBlendMode: "difference",
     animation: "b .2s infinite alternate"
   })
+  const [content, setContent] = useState({})
 
   let stack = ""
 
@@ -137,8 +133,6 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
       animation: "b .2s infinite alternate"
     })
 
-    console.log("USEEFFECT PAGE");
-
     document.getElementById("projectBar").style.height = (document.getElementById("scrollarea").offsetHeight) + "px"
     
     document.getElementById("projectBar__rotated-content").style.width = document.getElementById("projectBar")?.offsetHeight + "px"
@@ -149,44 +143,65 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
     document.getElementById("projectBar__rotated-content").style.top = (-position) + "px"
     document.getElementById("projectBar__rotated-content").style.left = position + "px"
     
+    
     gsap.set(".navbarProjectTitle", {
       yPercent: 110,
     })
-
+    
     document.querySelectorAll(".contentBlock").forEach((block, index) => {
+      
       ScrollTrigger.create({
         trigger: block,
         scroller: "#scrollarea",
         onEnter: (el) => setCurrentSection({id: index, name: el.trigger.children[0].children[0].innerText}),
         onEnterBack: (el) => setCurrentSection({id: index, name: el.trigger.children[0].children[0].innerText}),
+        markers: true
       });
-
-      gsap.fromTo(".circleText", {
-        rotate: 0
-      }, {
-        rotate: 360,
-        scrollTrigger: {
-          trigger: "#scrollarea > .flex",
-          scroller: "#scrollarea",
-          scrub: 0.5,
-        }
-      })
-      gsap.fromTo(".scrollStatus", {
-        left: "100%"
-      }, {
-        left: "0%",
-        scrollTrigger: {
-          trigger: "#scrollarea > .flex",
-          scroller: "#scrollarea",
-          scrub: 0.5,
-        }
-      })
+    })
+    gsap.fromTo(".circleText", {
+      rotate: 0
+    }, {
+      rotate: 360,
+      scrollTrigger: {
+        trigger: "#scrollarea > .flex",
+        scroller: "#scrollarea",
+        scrub: 0.5,
+      }
+    })
+    gsap.fromTo(".scrollStatus", {
+      left: "100%"
+    }, {
+      left: "0%",
+      scrollTrigger: {
+        trigger: "#scrollarea > .flex",
+        scroller: "#scrollarea",
+        scrub: 0.5,
+      }
     })
 
 
     setTimeout(() => {
       setTransition(false)
     }, 1000)
+
+    setContent({})
+
+    let contentAux = {}
+
+    let actualItem = null;
+    project.content.forEach((item: any) => {
+      if (item.__component === "section.section-name") {
+        
+        contentAux[item.name] = {}
+        actualItem = contentAux[item.name];
+      } else {
+        actualItem[
+          item.__component.substr(item.__component.indexOf(".") + 1)
+        ] = item;
+      }
+    });
+
+    setContent(contentAux)
 
   }, [router.asPath])
 
@@ -220,7 +235,7 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
       alreadyScrolled = false
       const distance = window.innerWidth - document.querySelector("main")?.getBoundingClientRect().right
       gsap.to(".floatingCard", {
-        right: 90 + distance,
+        right: distance -100,
         bottom: -60,
         rotation: -18,
       })
@@ -272,24 +287,15 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
     fontSize: "2em"
   }
 
-  const [content, setContent] = useState({})
-
-  let actualItem = null;
-  project.content.forEach((item: any) => {
-    if (item.__component === "section.section-name") {
-      content[item.name] = {}
-      actualItem = content[item.name];
-    } else {
-      actualItem[
-        item.__component.substr(item.__component.indexOf(".") + 1)
-      ] = item;
-    }
-  });
+  const stripeBackground = {
+    backgroundImage: `linear-gradient(130deg, ${color} 25%, ${backgroundColor} 25%, ${backgroundColor} 50%, ${color} 50%, ${color} 75%, ${backgroundColor} 75%, ${backgroundColor} 100%)`,
+    backgroundSize: "5.22px 6.22px"
+  }
 
   function splineLoaded() {
     const distance = window.innerWidth - document.querySelector("main")?.getBoundingClientRect().right
     gsap.to(".floatingCard", {
-      right: 90 + distance,
+      right: distance -100,
       top: 0.6 * window.innerHeight,
       zIndex: 20,
       rotation: -18,
@@ -309,7 +315,7 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
         <div className='grid grid-cols-8 grid-rows-6 h-full'>
           <div className='relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
             {
-              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Spline onLoad={splineLoaded} scene="https://prod.spline.design/uXo7Zf685kPDev3f/scene.splinecode" />
+              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Spline onLoad={splineLoaded} scene={project.spline} />
             }
           </div>
           <div className='row-start-1 row-end-5 col-start-7 col-end-9 overflow-hidden'>
@@ -337,6 +343,8 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
           </div>
         </div>
         <div className="flex content">
+          {
+          onTransition ? '' : 
           <div className='w-[70%]'>
             {
               Object.entries(content).map((section) => {
@@ -355,6 +363,7 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
               })
             }
           </div>
+          }
           <div className='border-l-8 w-[30%]' style={{marginLeft: "auto", borderColor: color}}>
             <div id="projectBar" className='sticky top-0'>
               <div id="projectBar__rotated-content" className='absolute flex' style={{ transform: "rotate(-90deg)" }}>
@@ -366,7 +375,7 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
                     <div className='absolute top-[50%] left-[50%] w-20 h-20 rounded-full' style={{backgroundColor: backgroundColor, transform: "translate(-50%, -50%)"}}></div>
                     <div className='absolute top-[50%] left-[50%] w-1 h-1 rounded-full' style={{backgroundColor: color, transform: "translate(-50%, -50%)"}}></div>
                     <div className='circleText'>
-                      <p>{
+                      <p className='uppercase'>{
                         `${currentSection.name} · ${currentSection.name} · ${currentSection.name} · ${currentSection.name} · `.split("").map((char, i) => <span style={{ color: backgroundColor, transform: "rotate(" + ((i * 360)/((currentSection.name.length+3)*4)) + "deg" }}>{char}</span>)  
                       }</p>
                     </div>
@@ -438,7 +447,7 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
             </div>
           </div>
         }
-        <div className='floatingCard fixed w-[250px] h-[500px]' style={{backgroundColor: color, right: -250, bottom: 0,}}>
+        <div className='floatingCard fixed w-[250px] h-[500px]' style={{backgroundColor: color, right: "-60vw", bottom: 0,}}>
           <Marquee className='font-mono uppercase' gradient={false} speed={50} style={{color: backgroundColor, width: "calc(100% - 20px)"}}>{project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} --</Marquee>
           <div className='absolute' style={{top: "calc(50% - 20px)", transform: "translateX(-1px)"}}>
             <Marquee className='font-mono uppercase' gradient={false} speed={3} style={{color: backgroundColor, width: "calc(500px - 20px)", transform: "rotate(90deg)"}}>{project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} --</Marquee>

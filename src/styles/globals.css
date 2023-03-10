@@ -254,7 +254,7 @@ a {
   right: 0;
   background: rgba(18, 16, 16, 0.1);
   opacity: 0;
-  z-index: 2;
+  z-index: 1000;
   pointer-events: none;
   animation: flicker 0.15s infinite;
 }
@@ -267,12 +267,13 @@ a {
   bottom: 0;
   right: 0;
   background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  z-index: 2;
+  z-index: 1000;
   background-size: 100% 2px, 3px 100%;
   pointer-events: none;
 }
 .crt {
   animation: textShadow 1.6s infinite;
+  perspective: 2000px;
 }
 
 @keyframes b{
@@ -359,6 +360,23 @@ section p {
 
   .recordingSquare {
     transition: background-color 0.5s ease;
+  }
+
+  .blinking-cursor {
+    width: 8px;
+    height: 12px;
+    background-color: #1f1c29;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    from,
+    to {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
   }
 
   .logo {

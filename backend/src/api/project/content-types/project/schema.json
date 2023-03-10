@@ -26,16 +26,6 @@
       "repeatable": false,
       "component": "grid.logo"
     },
-    "portraitImages": {
-      "type": "component",
-      "repeatable": true,
-      "component": "grid.portrait-image"
-    },
-    "landscapeImages": {
-      "type": "component",
-      "repeatable": true,
-      "component": "grid.landscape-image"
-    },
     "categories": {
       "type": "relation",
       "relation": "manyToMany",
@@ -94,6 +84,9 @@
     },
     "description": {
       "type": "text"
+    },
+    "spline": {
+      "type": "string"
     }
   }
 }

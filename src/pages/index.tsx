@@ -8,27 +8,35 @@ import { fetchAPI } from '@/api/api';
 import Section from '@/components/section';
 
 import { gsap } from "gsap";
+import Assistant from '@/components/assistant';
 
 type Params = {
   params: {
-    project: String
+    project: String,
   }
 }
 
   export async function getStaticProps({params}: Params): Promise<{
     // Passed to the page component as props
-    props: { project: any, color: String, backgroundColor: String }
+    props: { project: any, categories: any, color: String, backgroundColor: String }
   }> {
-
-    const projectsRes =
-      await fetchAPI("/landing", { populate: {
-        highlights: {
-          populate: "*"
-        }
-      }
-      })
     
-      console.log("PROJECT", projectsRes.data.attributes);
+    const [projectsRes, assistantRes] = await Promise.all([
+      fetchAPI("/landing", { populate: {
+          highlights: {
+            populate: "*"
+          }
+        }
+      }),
+      fetchAPI("/assistant", { populate: {
+        categories: {
+          populate: {
+            highlights: "*",
+            recommendations: "*"
+          }
+        }
+      }})
+    ])
       
 
     return {
@@ -36,14 +44,18 @@ type Params = {
       // Passed to the page component as props
       props: { 
         project: projectsRes.data.attributes, 
+        categories:  assistantRes.data.attributes.categories,
         color: projectsRes.data.attributes.color, 
         backgroundColor: projectsRes.data.attributes.backgroundColor 
       }
     }
   }
 
-export default function Home({project, color, backgroundColor, onTransition, setTransition, ...params}) {
-
+export default function Home({project, categories, color, backgroundColor, onTransition, setTransition, ...params}) {
+  const [highlights, setHighlights] = useState([
+    {highlight: "HIGHLIGHT 1"}, {highlight: "HIGHLIGHT 2"}
+  ])
+  
   const router = useRouter() 
   const [tvEffect, setTvEffect] = useState({
     background: `repeating-radial-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 50% 0/2500px 2500px, repeating-conic-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 60% 60%/2500px 2500px`,
@@ -57,9 +69,6 @@ export default function Home({project, color, backgroundColor, onTransition, set
       backgroundBlendMode: "difference",
       animation: "b .2s infinite alternate"
     })
-
-    console.log("USEEFFECT PAGE");
-    
 
     setTimeout(() => {
       setTransition(false)
@@ -87,6 +96,10 @@ export default function Home({project, color, backgroundColor, onTransition, set
 
   const [content, setContent] = useState({})
   
+  function highlightsUpdate(highlights) {
+    console.log("HIGHLIGHTS RECEIVED", highlights);
+    setHighlights(highlights)
+  }
 
   return (
     <> 
@@ -100,12 +113,12 @@ export default function Home({project, color, backgroundColor, onTransition, set
         <div className='grid grid-cols-8 grid-rows-6 h-full'>
           <div className='relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
             {
-              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Spline scene="https://prod.spline.design/uXo7Zf685kPDev3f/scene.splinecode" />
+              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Assistant categories={categories} highlightsUpdate={highlightsUpdate}></Assistant>
             }
           </div>
           <div className='row-start-1 row-end-5 col-start-7 col-end-9 overflow-hidden'>
             {
-              project.highlights.map(({highlight}) => {
+              highlights.map(({highlight}) => {
                 return (
                   <div className='p-6'>
                     <div className='highlight text-xl'>{highlight.toUpperCase()}</div>
@@ -119,9 +132,9 @@ export default function Home({project, color, backgroundColor, onTransition, set
             <Marquee className='marquee' gradient={false} speed={40} pauseOnHover={true} style={{color: backgroundColor, backgroundColor: color, fontSize: '56px'}}>{onTransition ? "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" : project.marquee}</Marquee>
             </div>
             <div className='h-2/3 pl-10 flex items-center' style={{ borderColor: color }} >
-              <h1 className='project-title overflow-y-hidden text-9xl font-black uppercase flex'>
+              <h1 className='project-title overflow-y-hidden text-7xl font-black uppercase flex'>
                 {
-                "".split("").map((char: String) => (<div className='title-char'>{char}</div>))
+                "FULL STACK DEVELOPER".split("").map((char: String) => (<div className='title-char'>{char}</div>))
                 }
               </h1>
             </div>

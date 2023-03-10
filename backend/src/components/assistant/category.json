@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_assistant_categories",
+  "info": {
+    "displayName": "category",
+    "icon": "equals",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "highlights": {
+      "type": "component",
+      "repeatable": true,
+      "component": "list.highlights"
+    },
+    "recommendations": {
+      "type": "component",
+      "repeatable": true,
+      "component": "assistant.recommendation"
+    }
+  }
+}
