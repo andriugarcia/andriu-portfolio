@@ -3,12 +3,14 @@ import { useRouter } from 'next/router';
 import { RefObject, useEffect, useMemo, useRef, useState } from 'react';
 // import Image from 'next/image'
 import Marquee from "react-fast-marquee";
-import Spline from '@splinetool/react-spline';
+
 import { fetchAPI } from '@/api/api';
 import Section from '@/components/section';
 
 import { gsap } from "gsap";
 import { log } from 'console';
+
+import Spline from "@/components/spline"
 
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
@@ -301,7 +303,6 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
       rotation: -18,
     })
   }
-  
 
   return (
     <> 
@@ -313,9 +314,9 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
       </Head>
       <main ref={scrollarea} id="scrollarea" className='overflow-y-scroll h-full' style={{ color: color}} onScroll={handleScroll}>
         <div className='grid grid-cols-8 grid-rows-6 h-full'>
-          <div className='relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
+          <div className='container3d relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
             {
-              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Spline onLoad={splineLoaded} scene={project.spline} />
+              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Spline scene={project.spline} onLoad={splineLoaded} />
             }
           </div>
           <div className='row-start-1 row-end-5 col-start-7 col-end-9 overflow-hidden'>

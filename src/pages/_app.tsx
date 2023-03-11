@@ -24,7 +24,7 @@ import {
   faChevronUp,
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { fetchAPI, getStrapiURL } from '@/api/api'
 import App from 'next/app'
 import { getStrapiMedia } from '@/api/media'
@@ -98,27 +98,6 @@ function hoveringElement(el) {
   
 }
 
-function startApp() {
-  gsap.set(".preloader", {opacity: 0})  
-  gsap.fromTo("#terminal", {
-      rotateX: 90
-    },
-    {
-      rotateX: 35,
-      duration: 1,
-      ease: "Back.easeOut",
-      onComplete: () => {loaded = true}
-    })
-    gsap.fromTo(".gridmap", {
-      rotateX: 90
-    },
-    {
-      rotateX: 35,
-      duration: 1,
-      ease: "Expo.easeOut",
-    })
-}
-
 function MyApp({ Component, pageProps, projects }) {
   const [backgroundColor, setBackgroundColor] = useState("")
   const [color, setColor] = useState("")
@@ -127,6 +106,8 @@ function MyApp({ Component, pageProps, projects }) {
   const [onTransition, setTransition] = useState(true)
   const [logoMultiplyColor, setLogoMultiplyColor] = useState("none")
   const [iconList, setIconList] = useState([])
+
+  const[started, setStarted] = useState(false)
 
   const router = useRouter() 
 
@@ -221,6 +202,29 @@ function MyApp({ Component, pageProps, projects }) {
     //   });
     // });
     }, [router.asPath])
+
+    function startApp() {
+      gsap.set(".preloader", {opacity: 0})  
+      gsap.fromTo("#terminal", {
+          rotateX: 90
+        },
+        {
+          rotateX: 35,
+          duration: 1,
+          ease: "Back.easeOut",
+          onComplete: () => {loaded = true}
+        })
+        gsap.fromTo(".gridmap", {
+          rotateX: 90
+        },
+        {
+          rotateX: 35,
+          duration: 1,
+          ease: "Expo.easeOut",
+        })
+    
+        setStarted(true)
+    }
 
   function goToProject(project, indexTarget = -1) {
     if (onTransition) return
@@ -349,7 +353,9 @@ function MyApp({ Component, pageProps, projects }) {
             />
           </div>
           <div className="ml-20 mt-20" style={{height: 'calc(100% - 5rem)'}}>
-            <Component {...pageProps} onTransition={onTransition} setTransition={setTransition}/>
+            {
+              started ? <Component {...pageProps} onTransition={onTransition} setTransition={setTransition}/> : ""
+            }
           </div>
         </div>
       </div>
