@@ -106,6 +106,7 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
   const scrollarea = useRef(null)
   const [blinking, setBlinking] = useState(false)
   const [scrollStatus, setScrollStatus] = useState(0)
+  const [splineEnabled, setSplineEnabled] = useState(true)
   const [currentSection, setCurrentSection] = useState({
     id: 0,
     name: "ABOUT"
@@ -126,6 +127,19 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
   setInterval(() => {
     setBlinking(!blinking)
   }, 1000)
+
+  useEffect(() => {
+    ScrollTrigger.create({
+      trigger: ".container3d",
+      scroller: "#scrollarea",
+      start: "top top",
+      end: "50% top",
+      onEnterBack: (el) => setSplineEnabled(true),
+      onLeave: (el) => setSplineEnabled(false),
+      markers: true
+    });
+
+  }, [])
 
   useEffect(() => {
     scrollarea.current.scrollTo(0, 0)
@@ -151,7 +165,6 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
     })
     
     document.querySelectorAll(".contentBlock").forEach((block, index) => {
-      
       ScrollTrigger.create({
         trigger: block,
         scroller: "#scrollarea",
@@ -302,6 +315,8 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
       zIndex: 20,
       rotation: -18,
     })
+
+    ScrollTrigger.refresh()
   }
 
   return (
@@ -316,8 +331,9 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
         <div className='grid grid-cols-8 grid-rows-6 h-full'>
           <div className='container3d relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
             {
-              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Spline scene={project.spline} onLoad={splineLoaded} />
+              (onTransition || !splineEnabled) ? <div className='w-full h-full' style={tvEffect}></div> : <></>
             }
+            <Spline scene={project.spline} onLoad={splineLoaded} hidden={(onTransition || !splineEnabled)}/>
           </div>
           <div className='row-start-1 row-end-5 col-start-7 col-end-9 overflow-hidden'>
             {
