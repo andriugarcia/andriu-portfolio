@@ -34,8 +34,32 @@ import HoverCard from '@/components/hoverCard'
 
 config.autoAddCss = false;
 
+let loaded = false
+
 function mod(value, module) {
   return ((value % module) + module) % module
+}
+
+function clickTerminal(e) {
+  if (!loaded) return
+  const terminalElement = document.getElementById("terminal")
+  var rect = terminalElement.getBoundingClientRect();
+  var x = e.clientX - rect.left; //x position within the element.
+  var y = e.clientY - rect.top;  //y position within the element.
+
+  console.log("CLICK", (x / terminalElement.offsetWidth));
+  
+
+  gsap.to("#terminal", {
+    rotateX: 35 - ((y / terminalElement.offsetHeight) - 0.5) * 3,
+    rotateY: ((x / terminalElement.offsetWidth) - 0.5) * 5,
+    duration: 0.2,
+    repeat: 1,
+    ease: "Power1.easeOut",
+    overwrite: true,
+    yoyo: true
+  })
+
 }
 
 function overTerminal(e) {
@@ -47,7 +71,10 @@ function overTerminal(e) {
 
   const gridmap = document.querySelector(".gridmap")
 
-  // gridmap.style.transform = `rotateX(35deg) translate(${(x / terminalElement.offsetWidth) * 20}px, ${(y / terminalElement.offsetHeight) * 20}px)`
+  if (loaded) {
+    gridmap.style.transform = `rotateX(35deg) translate(${(x / terminalElement.offsetWidth) * 20}px, ${(y / terminalElement.offsetHeight) * 20}px)`
+  }
+
 }
 
 function hoveringElement(el) {
@@ -69,6 +96,27 @@ function hoveringElement(el) {
     ease: "Expo.easeOut"
   })
   
+}
+
+function startApp() {
+  gsap.set(".preloader", {opacity: 0})  
+  gsap.fromTo("#terminal", {
+      rotateX: 90
+    },
+    {
+      rotateX: 35,
+      duration: 1,
+      ease: "Back.easeOut",
+      onComplete: () => {loaded = true}
+    })
+    gsap.fromTo(".gridmap", {
+      rotateX: 90
+    },
+    {
+      rotateX: 35,
+      duration: 1,
+      ease: "Expo.easeOut",
+    })
 }
 
 function MyApp({ Component, pageProps, projects }) {
@@ -113,26 +161,19 @@ function MyApp({ Component, pageProps, projects }) {
     gsap.set("#terminal, .gridmap", {
       rotateX: 90
     })
-
-    // gsap.fromTo("#terminal", {
-    //   rotateX: 90
-    // },
-    // {
-    //   rotateX: 35,
-    //   duration: 1,
-    //   delay: 1,
-    //   ease: "Back.easeOut",
-    // })
-    // gsap.fromTo(".gridmap", {
-    //   rotateX: 90
-    // },
-    // {
-    //   rotateX: 35,
-    //   duration: 1,
-    //   delay: 1,
-    //   ease: "Expo.easeOut",
-    // })
-
+    
+    gsap.fromTo('.preloader-char', {
+      yPercent: 110
+    }, {
+      yPercent: 0,
+      duration: 1,
+      stagger: {
+        from: "center",
+        amount: 0.2
+      },
+      delay: 0.5,
+      ease: 'Expo.easeOut',
+    })
   }, [])
 
   useEffect(() => {
@@ -257,16 +298,17 @@ function MyApp({ Component, pageProps, projects }) {
         />
 
 
-        <div className='fixed top-[50%] left-0 right-0 w-full'>
-        <div className='overflow-hidden text-4xl font-black uppercase flex' style={{ color }}>
-          {
-            "ADDING A NEW PERSPECTIVE TO WEB DEVELOPMENT".split("").map((char: String) => (<div className='title-char'>{char}</div>))
-          }
-        </div>
-        <div className='horizon-line w-full h-2' style={{ backgroundColor: color }}></div>
+        <div className='preloader fixed top-[50%] left-0 right-0 w-full flex flex-col items-center '>
+          <div className='overflow-hidden text-4xl font-black uppercase flex' style={{ color }}>
+            {
+              "ADDING A NEW PERSPECTIVE TO WEB DEVELOPMENT".split("").map((char: String) => (<div className='preloader-char' style={{marginRight: char == ' ' ? "12px" : "0"}}>{char}</div>))
+            }
+          </div>
+          <div className='horizon-line w-full h-2 my-2' style={{ backgroundColor: color }}></div>
+          <button className='pa-2' onClick={() => startApp()} style={{ backgroundColor: color, color: backgroundColor }}> START</button>
         </div>
 
-        <div id="terminal" className='relative h-full w-full border-8' style={{ borderColor: color, maxWidth: 1273, backgroundColor, transform: "rotateX(30deg)" }}>
+        <div id="terminal" className='relative h-full w-full border-8' onClick={(e) => clickTerminal(e)} style={{ borderColor: color, maxWidth: 1273, backgroundColor, transform: "rotateX(30deg)" }}>
           <div id="navbar" className="absolute top-0 left-0 right-0 h-20 border-b-8 flex items-center justify-start" style={{ borderColor: color }}>
           <Link className='relative h-full aspect-square w-20 border-r-8' href="/" style={{ borderColor: color}}>
             <div className='logo' style={{filter: logoMultiplyColor }}></div>

@@ -134,7 +134,7 @@ export default function Home({project, categories, color, backgroundColor, onTra
             <div className='h-2/3 pl-10 flex items-center' style={{ borderColor: color }} >
               <h1 className='project-title overflow-y-hidden text-7xl font-black uppercase flex'>
                 {
-                "FULL STACK DEVELOPER".split("").map((char: String) => (<div className='title-char'>{char}</div>))
+                "FULL STACK DEVELOPER".split("").map((char: String) => (<div className='title-char' style={{marginRight: char == ' ' ? "16px" : "0"}}>{char}</div>))
                 }
               </h1>
             </div>
