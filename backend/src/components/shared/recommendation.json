@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_shared_recommendations",
+  "info": {
+    "displayName": "Recommendation",
+    "icon": "angry"
+  },
+  "options": {},
+  "attributes": {
+    "author": {
+      "type": "string"
+    },
+    "content": {
+      "type": "richtext"
+    }
+  }
+}

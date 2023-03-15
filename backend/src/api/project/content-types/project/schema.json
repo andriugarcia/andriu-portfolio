@@ -48,7 +48,8 @@
         "shared.seo",
         "shared.slider",
         "shared.video",
-        "shared.external"
+        "shared.external",
+        "shared.recommendation"
       ]
     },
     "subtitle": {

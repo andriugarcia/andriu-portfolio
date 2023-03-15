@@ -11,6 +11,7 @@ import { gsap } from "gsap";
 import { log } from 'console';
 
 import Spline from "@/components/spline"
+import FloatingCard from "@/components/floatingCard"
 
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
@@ -99,7 +100,7 @@ export async function getStaticPaths() {
     }
   }
 
-export default function Home({project, nextProject, color, backgroundColor, onTransition, setTransition, ...params}) {
+export default function Home({project, nextProject, color, backgroundColor, goToProject, onTransition, setTransition, ...params}) {
 
   const router = useRouter() 
   const nextProjectRef = useRef(null)
@@ -136,7 +137,6 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
       end: "50% top",
       onEnterBack: (el) => setSplineEnabled(true),
       onLeave: (el) => setSplineEnabled(false),
-      markers: true
     });
 
   }, [])
@@ -164,15 +164,6 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
       yPercent: 110,
     })
     
-    document.querySelectorAll(".contentBlock").forEach((block, index) => {
-      ScrollTrigger.create({
-        trigger: block,
-        scroller: "#scrollarea",
-        onEnter: (el) => setCurrentSection({id: index, name: el.trigger.children[0].children[0].innerText}),
-        onEnterBack: (el) => setCurrentSection({id: index, name: el.trigger.children[0].children[0].innerText}),
-        markers: true
-      });
-    })
     gsap.fromTo(".circleText", {
       rotate: 0
     }, {
@@ -218,7 +209,38 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
 
     setContent(contentAux)
 
+    const timeline = gsap.timeline()
+    const tvOffElement = document.querySelector(".tv-off")
+    const tvOffRect = tvOffElement?.getBoundingClientRect()
+    const scrollArea = document.querySelector("#scrollarea")
+
+    timeline.to(".tv-off__top, .tv-off__bottom", {
+      height: 0,
+      duration: 0.5,
+      ease: "Expo.easeIn"
+    })
+    timeline.set(".tv-off", {
+      zIndex: 0,
+      display: "none"
+    })
+
   }, [router.asPath])
+
+  useEffect(() => {
+    setTimeout(() => {
+      console.log(Array.from(document.getElementsByClassName("contentBlock")));
+      Array.from(document.getElementsByClassName("contentBlock")).forEach((block, index) => {
+        console.log(block);
+        
+        ScrollTrigger.create({
+          trigger: block,
+          scroller: "#scrollarea",
+          onEnter: (el) => setCurrentSection({id: index, name: el.trigger.children[0].children[0].innerText}),
+          onEnterBack: (el) => setCurrentSection({id: index, name: el.trigger.children[0].children[0].innerText}),
+        });
+      })
+    }, 1000)
+  }, [content])
 
   let fullWidth = false
   let alreadyScrolled = false
@@ -271,7 +293,7 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
             duration: 3,
             ease: "linear",
             overwrite: true,
-            onComplete: () => router.push('/' + nextProject.title.replaceAll(" ", "").toLowerCase())
+            onComplete: () => goToProject()
           })
         }
   
@@ -392,7 +414,7 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
                     <div className='absolute top-[50%] left-[50%] w-20 h-20 rounded-full' style={{backgroundColor: backgroundColor, transform: "translate(-50%, -50%)"}}></div>
                     <div className='absolute top-[50%] left-[50%] w-1 h-1 rounded-full' style={{backgroundColor: color, transform: "translate(-50%, -50%)"}}></div>
                     <div className='circleText'>
-                      <p className='uppercase'>{
+                      <p className='uppercase text-mono'>{
                         `${currentSection.name} · ${currentSection.name} · ${currentSection.name} · ${currentSection.name} · `.split("").map((char, i) => <span style={{ color: backgroundColor, transform: "rotate(" + ((i * 360)/((currentSection.name.length+3)*4)) + "deg" }}>{char}</span>)  
                       }</p>
                     </div>
@@ -464,19 +486,7 @@ export default function Home({project, nextProject, color, backgroundColor, onTr
             </div>
           </div>
         }
-        <div className='floatingCard fixed w-[250px] h-[500px]' style={{backgroundColor: color, right: "-60vw", bottom: 0,}}>
-          <Marquee className='font-mono uppercase' gradient={false} speed={50} style={{color: backgroundColor, width: "calc(100% - 20px)"}}>{project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} --</Marquee>
-          <div className='absolute' style={{top: "calc(50% - 20px)", transform: "translateX(-1px)"}}>
-            <Marquee className='font-mono uppercase' gradient={false} speed={3} style={{color: backgroundColor, width: "calc(500px - 20px)", transform: "rotate(90deg)"}}>{project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} --</Marquee>
-          </div>
-          <div className='absolute' style={{left: "-100%", top: "50%", transform: "translateX(19px)"}}>
-            <Marquee className='font-mono uppercase' gradient={false} speed={3} style={{color: backgroundColor, width: "calc(500px - 20px)", transform: "rotate(-90deg)"}}>{project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} --</Marquee>
-          </div>
-          <div className='absolute' style={{top: "100%", transform: "translate(20px, -100%)"}}>
-            <Marquee className='font-mono uppercase' gradient={false} speed={50} style={{color: backgroundColor, width: "calc(100% - 20px)", transform: "rotate(180deg)"}}>{project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} -- {project.title} --</Marquee>
-          </div>
-          <p className='absolute font-bold inset-[26px] text-2xl uppercase' style={{ color: backgroundColor, textAlign: "justify" }}>{ project.description }</p>
-        </div>
+        <FloatingCard project={project} color={color} backgroundColor={backgroundColor}></FloatingCard>
       </main>
     </>
   )

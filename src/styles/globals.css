@@ -273,7 +273,7 @@ a {
 }
 .crt {
   animation: textShadow 1.6s infinite;
-  perspective: 2000px;
+  perspective: 1500px;
 }
 
 @keyframes b{

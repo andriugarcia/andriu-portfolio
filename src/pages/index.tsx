@@ -6,6 +6,7 @@ import Marquee from "react-fast-marquee";
 import Spline from '@splinetool/react-spline';
 import { fetchAPI } from '@/api/api';
 import Section from '@/components/section';
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
 import { gsap } from "gsap";
 import Assistant from '@/components/assistant';
@@ -101,6 +102,18 @@ export default function Home({project, categories, color, backgroundColor, onTra
     setHighlights(highlights)
   }
 
+  function splineLoaded() {
+    const distance = window.innerWidth - document.querySelector("main")?.getBoundingClientRect().right
+    gsap.to(".floatingCard", {
+      right: distance -100,
+      top: 0.6 * window.innerHeight,
+      zIndex: 20,
+      rotation: -18,
+    })
+
+    ScrollTrigger.refresh()
+  }
+
   return (
     <> 
       <Head>
@@ -113,7 +126,8 @@ export default function Home({project, categories, color, backgroundColor, onTra
         <div className='grid grid-cols-8 grid-rows-6 h-full'>
           <div className='relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
             {
-              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Assistant categories={categories} highlightsUpdate={highlightsUpdate}></Assistant>
+              // onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Assistant categories={categories} highlightsUpdate={highlightsUpdate}></Assistant>
+              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Spline scene={project.spline} onLoad={splineLoaded}/>
             }
           </div>
           <div className='row-start-1 row-end-5 col-start-7 col-end-9 overflow-hidden'>

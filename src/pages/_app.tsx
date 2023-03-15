@@ -77,25 +77,14 @@ function overTerminal(e) {
 
 }
 
-function hoveringElement(el) {
-  console.log("HOVERING", el)
+const positionElement = (e)=> {
+  const mouseY = e.clientY;
+  const mouseX = e.clientX;
 
-  if (!el.clientY) return
+  const cursor = document.querySelector<HTMLElement>(".cursor")
 
-  const hoverElement = document.querySelector<HTMLElement>(".hoverElement")
-  const rect = hoverElement?.getBoundingClientRect()
-  
-  gsap.fromTo(".hoverElement", {
-    top: el.clientY - (el.target.offsetHeight),
-    left: "-50vw"
-  },
-  {
-    top: el.clientY - (el.target.offsetHeight),
-    left: el.clientX - rect?.width - el.target.offsetWidth,
-    duration: 1,
-    ease: "Expo.easeOut"
-  })
-  
+  cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+
 }
 
 function MyApp({ Component, pageProps, projects }) {
@@ -139,8 +128,19 @@ function MyApp({ Component, pageProps, projects }) {
     
     setIconList(list)
 
+    window.addEventListener('mousemove', positionElement)
+
     gsap.set("#terminal, .gridmap", {
       rotateX: 90
+    })
+
+    gsap.fromTo(".horizon-line", {
+      width: 0
+    }, {
+      width: "100%",
+      duration: 1,
+      delay: 0.5,
+      ease: "Expo.easeOut"
     })
     
     gsap.fromTo('.preloader-char', {
@@ -152,7 +152,7 @@ function MyApp({ Component, pageProps, projects }) {
         from: "center",
         amount: 0.2
       },
-      delay: 0.5,
+      delay: 1,
       ease: 'Expo.easeOut',
     })
   }, [])
@@ -205,6 +205,11 @@ function MyApp({ Component, pageProps, projects }) {
 
     function startApp() {
       gsap.set(".preloader", {opacity: 0})  
+      gsap.to(".cursor", {
+        rotateX: 35,
+        duration: 1,
+        ease: "Expo.easeOut"
+      })
       gsap.fromTo("#terminal", {
           rotateX: 90
         },
@@ -240,7 +245,7 @@ function MyApp({ Component, pageProps, projects }) {
 
     const iconHeight = document.querySelector(".icon").offsetHeight + 2.5 * parseFloat(getComputedStyle(document.documentElement).fontSize)
 
-    gsap.to(".icon", {
+    gsap.to(`*[class^="hover-container-"]`, {
       y: iconHeight * -steps,
       duration: 1
     })
@@ -277,6 +282,25 @@ function MyApp({ Component, pageProps, projects }) {
         bottom: -37,
         rotation: 0,
       })
+
+      const timeline = gsap.timeline()
+      const tvOffElement = document.querySelector(".tv-off")
+      const tvOffRect = tvOffElement?.getBoundingClientRect()
+      const scrollArea = document.querySelector("#scrollarea")
+
+      if (scrollArea && scrollArea.scrollTop > 50) {
+        timeline.set(".tv-off", {
+          zIndex: 5000,
+          display: "initial",
+        })
+        timeline.to(".tv-off__top, .tv-off__bottom", {
+          height: "50%",
+          duration: .5,
+          ease: "Expo.easeOut"
+        })
+      }
+      
+
     }
   }
   return (
@@ -308,8 +332,8 @@ function MyApp({ Component, pageProps, projects }) {
               "ADDING A NEW PERSPECTIVE TO WEB DEVELOPMENT".split("").map((char: String) => (<div className='preloader-char' style={{marginRight: char == ' ' ? "12px" : "0"}}>{char}</div>))
             }
           </div>
-          <div className='horizon-line w-full h-2 my-2' style={{ backgroundColor: color }}></div>
-          <button className='pa-2' onClick={() => startApp()} style={{ backgroundColor: color, color: backgroundColor }}> START</button>
+          <div className='horizon-line w-0 h-2 my-2' style={{ backgroundColor: color }}></div>
+          <button className='start-button pa-2 font-mono font-bold' onClick={() => startApp()} style={{ color, letterSpacing: 0.5 }}> START</button>
         </div>
 
         <div id="terminal" className='relative h-full w-full border-8' onClick={(e) => clickTerminal(e)} style={{ borderColor: color, maxWidth: 1273, backgroundColor, transform: "rotateX(30deg)" }}>
@@ -338,7 +362,7 @@ function MyApp({ Component, pageProps, projects }) {
               <div className='absolute top-0 bottom-0 left-[16px] flex flex-col gap-y-10 justify-center items-center'>
                 {
                   iconList.map((item, index) => {
-                    return (<HoverCard onHover={() => hoveringElement}>
+                    return (<HoverCard project={item?.attributes} type="project" color={color} backgroundColor={backgroundColor}>
                       <div className='icon w-10 h-10'><img src={getStrapiURL(item?.attributes?.logo?.logo.data.attributes.url)} onClick={() => goToProject(item, index)} className='w-10 h-10 z-10'></img></div>
                     </HoverCard>)
                   })
@@ -352,12 +376,56 @@ function MyApp({ Component, pageProps, projects }) {
               style={{ fontSize: 36, color: color }}
             />
           </div>
-          <div className="ml-20 mt-20" style={{height: 'calc(100% - 5rem)'}}>
+          <div className="relative ml-20 mt-20" style={{height: 'calc(100% - 5rem)'}}>
+            <div className='absolute tv-off inset-0 overflow-hidden' style={{ display: "none" }}>
+              <div className='tv-off__top absolute top-0 left-0 right-0 w-full h-0' style={{backgroundColor}}></div>
+              <div className='tv-off__bottom absolute bottom-0 left-0 right-0 w-full h-0' style={{backgroundColor}}></div>
+            </div>
             {
-              started ? <Component {...pageProps} onTransition={onTransition} setTransition={setTransition}/> : ""
+              started ? <Component {...pageProps} goToProject={() => goToProject("next")} onTransition={onTransition} setTransition={setTransition}/> : ""
             }
           </div>
         </div>
+
+        <svg className='fixed cursor' width="42" height="42" version="1.1" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+          <g>
+            <path d="m458.42 532.46h-201.94l-140.12-149.58-1.5547-110.26h97.816l-0.003907-253.58h116.41v156.58h195.37l36.508 54.562v199.8zm-193.83-18.723h176.61l-27.738-27.742-175.41-0.60547zm166.01-37.086 28.57 28.59 83.016-83.008v-2.8906l-27.148-27.148zm-204.71-10.02 187.62 0.64844 92.176-92.188v-180.75h-78.961v87.629h-18.723l0.003906-87.629h-78.973v87.629h-18.715v-244.21h-78.977v293.5h-18.723v-39.922h-78.828l1.1797 83.719zm298.52-91.543 17.785 17.785v-156.1l-17.422-27.715z"/>
+            <use x="70" y="644"/>
+            <use x="90.550781" y="644"/>
+            <use x="104.359375" y="644"/>
+            <use x="123.347656" y="644"/>
+            <use x="142.242188" y="644"/>
+            <use x="155.628906" y="644"/>
+            <use x="174.617188" y="644"/>
+            <use x="204.410156" y="644"/>
+            <use x="224.453125" y="644"/>
+            <use x="252.453125" y="644"/>
+            <use x="265.835938" y="644"/>
+            <use x="285.769531" y="644"/>
+            <use x="304.664062" y="644"/>
+            <use x="333.839844" y="644"/>
+            <use x="343.4375" y="644"/>
+            <use x="70" y="672"/>
+            <use x="82.183594" y="672"/>
+            <use x="95.992188" y="672"/>
+            <use x="115.226562" y="672"/>
+            <use x="154.152344" y="672"/>
+            <use x="167.535156" y="672"/>
+            <use x="187.46875" y="672"/>
+            <use x="216.207031" y="672"/>
+            <use x="239.640625" y="672"/>
+            <use x="258.878906" y="672"/>
+            <use x="278.8125" y="672"/>
+            <use x="308.492188" y="672"/>
+            <use x="329.015625" y="672"/>
+            <use x="342.820312" y="672"/>
+            <use x="362.058594" y="672"/>
+            <use x="371.65625" y="672"/>
+            <use x="390.648438" y="672"/>
+            <use x="407.242188" y="672"/>
+          </g>
+          </svg>
+
       </div>
     </>
     
