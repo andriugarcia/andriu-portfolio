@@ -445,7 +445,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
                       <div className='w-6 h-6 mr-2' style={{backgroundColor: color}}></div>
                       <div className='recordingSquare w-6 h-6 border-4' style={{borderColor: color, backgroundColor: blinking ? color : backgroundColor}}></div>
                     </div>
-                    <Marquee className='marquee font-mono' gradient={false} speed={2} style={{color, fontSize: '12px'}}>
+                    <Marquee className='marquee font-mono uppercase' gradient={false} speed={2} style={{color, fontSize: '12px'}}>
                       { [...Array(8)].map((e, i) => " " + currentSection.name + " · ") }
                     </Marquee>
                     <div className='border-4 relative' style={{ width: "100%", height: 32, borderColor: color }}>

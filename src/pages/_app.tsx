@@ -9,7 +9,7 @@ const league = League_Spartan({ subsets: ['latin'], variable: '--font-league-spa
 import type { AppProps } from 'next/app'
 import "@fortawesome/fontawesome-svg-core/styles.css"; 
 
-import { config } from "@fortawesome/fontawesome-svg-core";
+import { config, icon } from "@fortawesome/fontawesome-svg-core";
 
 import styles from '@/styles/Home.module.css'
 
@@ -78,8 +78,8 @@ function overTerminal(e) {
 }
 
 const positionElement = (e)=> {
-  const mouseY = e.clientY;
-  const mouseX = e.clientX;
+  const mouseY = e.clientY - 5;
+  const mouseX = e.clientX - 10;
 
   const cursor = document.querySelector<HTMLElement>(".cursor")
 
@@ -231,23 +231,38 @@ function MyApp({ Component, pageProps, projects }) {
         setStarted(true)
     }
 
+  let scrollIndex = 4
+
   function goToProject(project, indexTarget = -1) {
+    console.log(index);
+    
     if (onTransition) return
     if (project === "next") {
-      indexTarget = index + 1
+      indexTarget = scrollIndex + 1
       project = iconList[indexTarget]
     } else if (project === "previous") {
-      indexTarget = index - 1
+      indexTarget = scrollIndex - 1
       project = iconList[indexTarget]
     }
 
     const steps = indexTarget - 4
 
-    const iconHeight = document.querySelector(".icon").offsetHeight + 2.5 * parseFloat(getComputedStyle(document.documentElement).fontSize)
+    // const iconHeight = document.querySelector(".icon").offsetHeight + 2.5 * parseFloat(getComputedStyle(document.documentElement).fontSize)
+    const iconHeight = 102.5
 
-    gsap.to(`*[class^="hover-container-"]`, {
-      y: iconHeight * -steps,
-      duration: 1
+    gsap.fromTo(`*[class^="hover-container-"]`, {
+      y: "-=" + (iconHeight * -steps) + "px",
+    }, {
+      y: 0,
+      duration: 1,
+      stagger: 0.05,
+      onStart: () => {
+        if (steps > 0) {
+          setIconList([...iconList.slice(steps), ...iconList.slice(0, steps)])
+        } else {
+          setIconList([...iconList.slice(iconList.length + steps), ...iconList.slice(0, iconList.length + steps)])
+        }
+      }
     })
   
     if(typeof window !== 'undefined') {
@@ -305,7 +320,7 @@ function MyApp({ Component, pageProps, projects }) {
   }
   return (
     <>
-      <div className={`crt h-[100vh] p-10 ${league.variable} overflow-hidden flex justify-center`} style={ scrollbarStyle } onMouseMove={(e) => overTerminal(e)}>
+      <div className={`crt h-[100vh] cursor-none p-10 ${league.variable} overflow-hidden flex justify-center`} style={ scrollbarStyle } onMouseMove={(e) => overTerminal(e)}>
         
         <div className='gridmap fixed inset-[-500px]' style={{  transform: "rotateX(30deg)", filter: "blur(1px)", backgroundSize: "40px 40px", borderRight: `1px solid ${color}`, backgroundImage: `linear-gradient(to right, ${color} 1px, transparent 1px), linear-gradient(to bottom, ${color} 1px, transparent 1px)`}}></div>
         {/* <div className='hoverElement fixed w-60 h-20' style={{transform: "rotateX(30deg)", backgroundColor: "red", zIndex: 3000}}></div> */}
@@ -359,11 +374,11 @@ function MyApp({ Component, pageProps, projects }) {
               style={{ fontSize: 36, color: color }}
             />
             <div style={{height: "calc(200px + 12.5rem)", width: "100%", clipPath: "inset(0 0 0 0)"}}>
-              <div className='absolute top-0 bottom-0 left-[16px] flex flex-col gap-y-10 justify-center items-center'>
+              <div className='absolute top-0 bottom-0 left-[16px] gap-y-10'>
                 {
                   iconList.map((item, index) => {
                     return (<HoverCard project={item?.attributes} type="project" color={color} backgroundColor={backgroundColor}>
-                      <div className='icon w-10 h-10'><img src={getStrapiURL(item?.attributes?.logo?.logo.data.attributes.url)} onClick={() => goToProject(item, index)} className='w-10 h-10 z-10'></img></div>
+                      <div className='absolute top-0 icon w-10 h-10' style={{ transform: `translateY(${index * (102.5)}px)` }}><img src={getStrapiURL(item?.attributes?.logo?.logo.data.attributes.url)} onClick={() => goToProject(item, index)} className='w-10 h-10 z-10'></img></div>
                     </HoverCard>)
                   })
                 }
@@ -387,44 +402,13 @@ function MyApp({ Component, pageProps, projects }) {
           </div>
         </div>
 
-        <svg className='fixed cursor' width="42" height="42" version="1.1" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+        <svg className='fixed cursor top-0 left-0 pointer-events-none' width="64" height="64" version="1.1" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
           <g>
-            <path d="m458.42 532.46h-201.94l-140.12-149.58-1.5547-110.26h97.816l-0.003907-253.58h116.41v156.58h195.37l36.508 54.562v199.8zm-193.83-18.723h176.61l-27.738-27.742-175.41-0.60547zm166.01-37.086 28.57 28.59 83.016-83.008v-2.8906l-27.148-27.148zm-204.71-10.02 187.62 0.64844 92.176-92.188v-180.75h-78.961v87.629h-18.723l0.003906-87.629h-78.973v87.629h-18.715v-244.21h-78.977v293.5h-18.723v-39.922h-78.828l1.1797 83.719zm298.52-91.543 17.785 17.785v-156.1l-17.422-27.715z"/>
-            <use x="70" y="644"/>
-            <use x="90.550781" y="644"/>
-            <use x="104.359375" y="644"/>
-            <use x="123.347656" y="644"/>
-            <use x="142.242188" y="644"/>
-            <use x="155.628906" y="644"/>
-            <use x="174.617188" y="644"/>
-            <use x="204.410156" y="644"/>
-            <use x="224.453125" y="644"/>
-            <use x="252.453125" y="644"/>
-            <use x="265.835938" y="644"/>
-            <use x="285.769531" y="644"/>
-            <use x="304.664062" y="644"/>
-            <use x="333.839844" y="644"/>
-            <use x="343.4375" y="644"/>
-            <use x="70" y="672"/>
-            <use x="82.183594" y="672"/>
-            <use x="95.992188" y="672"/>
-            <use x="115.226562" y="672"/>
-            <use x="154.152344" y="672"/>
-            <use x="167.535156" y="672"/>
-            <use x="187.46875" y="672"/>
-            <use x="216.207031" y="672"/>
-            <use x="239.640625" y="672"/>
-            <use x="258.878906" y="672"/>
-            <use x="278.8125" y="672"/>
-            <use x="308.492188" y="672"/>
-            <use x="329.015625" y="672"/>
-            <use x="342.820312" y="672"/>
-            <use x="362.058594" y="672"/>
-            <use x="371.65625" y="672"/>
-            <use x="390.648438" y="672"/>
-            <use x="407.242188" y="672"/>
+            <path d="m155.45 28.816c0.09375-25.605 31.004-38.418 49.188-20.391l330.04 327.22c6.4961 6.4414 9.0586 14.41 8.5742 22.055v33.309c0 14.906-13.328 30.613-32.188 28.449l-188.14-21.594-117.76 148.17c-17.039 21.441-51.566 9.3203-51.465-18.066 0.625-166.39 1.1172-332.77 1.7422-499.15zm34.492 41.48c0.035157-10.242 12.398-15.371 19.676-8.1602l265.16 262.9c7.7812 7.7148 1.4414 20.918-9.4492 19.668l-141.64-16.254c-9.8984-1.1367-19.688 2.9141-25.887 10.719l-88.57 111.44c-6.8125 8.5742-20.621 3.7305-20.586-7.2227z" fill-rule="nonzero" fill={backgroundColor}/>
+            <path d="m155.45 28.816c0.09375-25.605 31.004-38.418 49.188-20.391l330.04 327.22c6.4961 6.4414 9.0586 14.41 8.5742 22.055v33.309c0 14.906-13.328 30.613-32.188 28.449l-188.14-21.594-117.76 148.17c-17.039 21.441-51.566 9.3203-51.465-18.066 0.625-166.39 1.1172-332.77 1.7422-499.15zm34.492 41.48c0.035157-10.242 12.398-15.371 19.676-8.1602l265.16 262.9c7.7812 7.7148 1.4414 20.918-9.4492 19.668l-141.64-16.254c-9.8984-1.1367-19.688 2.9141-25.887 10.719l-88.57 111.44c-6.8125 8.5742-20.621 3.7305-20.586-7.2227z" fill-rule="evenodd" fill={color}/>
           </g>
           </svg>
+
 
       </div>
     </>
