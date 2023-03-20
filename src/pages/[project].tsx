@@ -82,8 +82,8 @@ export async function getStaticPaths() {
       
       let nextProject = null
       try {
-        const nextProjectData = await fetchAPI(`/projects/${projectsRes.data[0].id + 1}`)
-        nextProject = nextProjectData.data.attributes
+        // const nextProjectData = await fetchAPI(`/projects/${projectsRes.data[0].id + 1}`)
+        // nextProject = nextProjectData.data.attributes
       } catch(err) {
         console.error("Next Project not available")
       }
@@ -93,7 +93,7 @@ export async function getStaticPaths() {
       // Passed to the page component as props
       props: { 
         project: projectsRes.data[0].attributes, 
-        nextProject,
+        // nextProject,
         color: projectsRes.data[0].attributes.secondaryColor, 
         backgroundColor: projectsRes.data[0].attributes.color 
       }
@@ -102,12 +102,17 @@ export async function getStaticPaths() {
 
 export default function Home({project, nextProject, color, backgroundColor, goToProject, onTransition, setTransition, ...params}) {
 
+  console.log(nextProject);
+  
+
   const router = useRouter() 
   const nextProjectRef = useRef(null)
   const scrollarea = useRef(null)
   const [blinking, setBlinking] = useState(false)
   const [scrollStatus, setScrollStatus] = useState(0)
   const [splineEnabled, setSplineEnabled] = useState(true)
+  let sectionScrollDistances = []
+  let [fullWidth, setFullWidth] = useState(false)
   const [currentSection, setCurrentSection] = useState({
     id: 0,
     name: "ABOUT"
@@ -125,11 +130,13 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
     stack += tech.attributes.name.toUpperCase() + " // "
   })
 
-  setInterval(() => {
-    setBlinking(!blinking)
-  }, 1000)
-
+  
   useEffect(() => {
+    
+    setInterval(() => {
+      setBlinking(!blinking)
+    }, 2000)
+
     ScrollTrigger.create({
       trigger: ".container3d",
       scroller: "#scrollarea",
@@ -162,27 +169,6 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
     
     gsap.set(".navbarProjectTitle", {
       yPercent: 110,
-    })
-    
-    gsap.fromTo(".circleText", {
-      rotate: 0
-    }, {
-      rotate: 360,
-      scrollTrigger: {
-        trigger: "#scrollarea > .flex",
-        scroller: "#scrollarea",
-        scrub: 0.5,
-      }
-    })
-    gsap.fromTo(".scrollStatus", {
-      left: "100%"
-    }, {
-      left: "0%",
-      scrollTrigger: {
-        trigger: "#scrollarea > .flex",
-        scroller: "#scrollarea",
-        scrub: 0.5,
-      }
     })
 
 
@@ -225,24 +211,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
     })
 
   }, [router.asPath])
-
-  useEffect(() => {
-    setTimeout(() => {
-      console.log(Array.from(document.getElementsByClassName("contentBlock")));
-      Array.from(document.getElementsByClassName("contentBlock")).forEach((block, index) => {
-        console.log(block);
-        
-        ScrollTrigger.create({
-          trigger: block,
-          scroller: "#scrollarea",
-          onEnter: (el) => setCurrentSection({id: index, name: el.trigger.children[0].children[0].innerText}),
-          onEnterBack: (el) => setCurrentSection({id: index, name: el.trigger.children[0].children[0].innerText}),
-        });
-      })
-    }, 1000)
-  }, [content])
-
-  let fullWidth = false
+  
   let alreadyScrolled = false
   const handleScroll = (event) => {
     const height = event.currentTarget.clientHeight;
@@ -250,7 +219,37 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
     const scrollTop = event.currentTarget.scrollTop;
 
     setScrollStatus(((height + scrollTop) / barHeight) * 100)
-    
+
+    const contentBlocks = Array.from(document.getElementsByClassName("contentBlock"))
+
+    for (let i = contentBlocks.length - 1; i > 0; i -= 1) {
+  
+        // sectionScrollDistances.push({
+        //   id: index,
+        //   name: block.id,
+        //   scrollTop: block.offsetTop
+        // })
+  
+  
+        console.log(scrollTop, contentBlocks[i].id.toUpperCase(), contentBlocks[i].offsetTop);
+        
+  
+        if (scrollTop > contentBlocks[i].offsetTop) {
+          setCurrentSection({
+            id: i,
+            name: contentBlocks[i].id.toUpperCase(),
+          })
+          console.log("SECTION UPDATED", {
+            id: contentBlocks[i].id,
+            name: contentBlocks[i].id.toUpperCase(),
+          });
+          
+          break;
+        }
+
+    }
+
+
 
     if(scrollTop > 0) {
       if (!alreadyScrolled) {
@@ -262,7 +261,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
         })
       
         gsap.to(".floatingCard", {
-          right: -300,
+          right: -500,
           top: 0.6 * window.innerHeight,
           zIndex: 20,
           rotation: 0,
@@ -272,7 +271,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
       alreadyScrolled = false
       const distance = window.innerWidth - document.querySelector("main")?.getBoundingClientRect().right
       gsap.to(".floatingCard", {
-        right: distance -100,
+        right: distance + 200,
         bottom: -60,
         rotation: -18,
       })
@@ -287,9 +286,9 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
         // Full width
         
         if (!fullWidth) {
-          fullWidth = true
+          setFullWidth(true)
           gsap.to(".nextProjectOverlay", {
-            right: "0%",
+            clipPath: "inset(0 0% 0 0)",
             duration: 3,
             ease: "linear",
             overwrite: true,
@@ -299,9 +298,9 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
   
       } else {
         if (fullWidth) {
-          fullWidth = false
+          setFullWidth(false)
           gsap.to(".nextProjectOverlay", {
-            right: "100%",
+            clipPath: "inset(0 100% 0 0)",
             duration: 3,
             ease: "linear",
             overwrite: true
@@ -318,7 +317,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
     transformOrigin: "bottom right",
     transform: "rotate(-90deg)",
     position: "absolute",
-    top: 0, right: 0,
+    top: 0, right: 12,
     // position: "sticky",
     // top: 184,
     fontSize: "2em"
@@ -332,7 +331,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
   function splineLoaded() {
     const distance = window.innerWidth - document.querySelector("main")?.getBoundingClientRect().right
     gsap.to(".floatingCard", {
-      right: distance -100,
+      right: distance + 200,
       top: 0.6 * window.innerHeight,
       zIndex: 20,
       rotation: -18,
@@ -350,6 +349,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main ref={scrollarea} id="scrollarea" className='overflow-y-scroll h-full' style={{ color: color}} onScroll={handleScroll}>
+        <div id="topProject"></div>
         <div className='grid grid-cols-8 grid-rows-6 h-full'>
           <div className='container3d relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
             {
@@ -388,7 +388,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
             {
               Object.entries(content).map((section) => {
                 return (
-                  <div className="contentBlock flex">
+                  <div id={section[0].toLowerCase()} className="contentBlock flex">
                     <div className="relative border-8 -ml-4 -mt-2 w-20 mh-40" style={{borderColor: color}}>
                       <div className='sticky h-80 top-0 pr-2'>
                         <h2 className="text-xl font-black uppercase" style={{color, ...textRotation}}>{section[0]}</h2>
@@ -413,7 +413,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
                   <div className='relative w-[200px] aspect-square rounded-full' style={{backgroundColor: color}}>
                     <div className='absolute top-[50%] left-[50%] w-20 h-20 rounded-full' style={{backgroundColor: backgroundColor, transform: "translate(-50%, -50%)"}}></div>
                     <div className='absolute top-[50%] left-[50%] w-1 h-1 rounded-full' style={{backgroundColor: color, transform: "translate(-50%, -50%)"}}></div>
-                    <div className='circleText'>
+                    <div className='circleText' style={{ transform: `rotate(${scrollStatus * 3.6}deg)` }}>
                       <p className='uppercase text-mono'>{
                         `${currentSection.name} · ${currentSection.name} · ${currentSection.name} · ${currentSection.name} · `.split("").map((char, i) => <span style={{ color: backgroundColor, transform: "rotate(" + ((i * 360)/((currentSection.name.length+3)*4)) + "deg" }}>{char}</span>)  
                       }</p>
@@ -445,18 +445,17 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
                       <div className='w-6 h-6 mr-2' style={{backgroundColor: color}}></div>
                       <div className='recordingSquare w-6 h-6 border-4' style={{borderColor: color, backgroundColor: blinking ? color : backgroundColor}}></div>
                     </div>
-                    <Marquee className='marquee font-mono uppercase' gradient={false} speed={2} style={{color, fontSize: '12px'}}>
+                    <Marquee className='marquee font-mono uppercase' gradient={false} speed={12} style={{color, fontSize: '12px'}}>
                       { [...Array(8)].map((e, i) => " " + currentSection.name + " · ") }
                     </Marquee>
                     <div className='border-4 relative' style={{ width: "100%", height: 32, borderColor: color }}>
-                      <div className='scrollStatus absolute right-0 top-0 bottom-0' style={{backgroundColor: color}}></div>
+                      <div className='scrollStatus absolute right-0 top-0 bottom-0' style={{backgroundColor: color, left: 100 - scrollStatus + "%"}}></div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
         {
           !nextProject ? '' :
@@ -464,7 +463,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
             <div className='border-y-8' style={{ borderColor: color }}>
               <Marquee className='marquee' gradient={false} speed={40} style={{fontSize: '56px'}}>NEXT PROJECT -- NEXT PROJECT -- NEXT PROJECT -- NEXT PROJECT -- NEXT PROJECT -- NEXT PROJECT --</Marquee>
             </div>
-            <div className='pl-10 flex items-center' style={{ borderColor: color }} >
+            <div className='nextProject pl-10 flex items-center' style={{ borderColor: color }} >
               <span className='overflow-y-hidden text-9xl font-black uppercase flex'>
                 {
                   nextProject.title
@@ -472,7 +471,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
               </span>
             </div>
             {/* Inverted version */}
-            <div className='nextProjectOverlay absolute z-10 left-0 top-0 bottom-0 right-[100%]'>
+            <div className='nextProjectOverlay absolute z-10 inset-0' style={{ clipPath: "inset(0 100% 0 0)" }}>
               <div className='border-y-8' style={{ backgroundColor: color, color: backgroundColor, borderColor: color }}>
                 <Marquee className='marquee' gradient={false} speed={40} style={{fontSize: '56px'}}>NEXT PROJECT -- NEXT PROJECT -- NEXT PROJECT -- NEXT PROJECT -- NEXT PROJECT -- NEXT PROJECT --</Marquee>
               </div>

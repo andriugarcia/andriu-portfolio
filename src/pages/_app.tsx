@@ -24,7 +24,7 @@ import {
   faChevronUp,
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { use, useEffect, useState } from 'react'
+import { use, useEffect, useRef, useState } from 'react'
 import { fetchAPI, getStrapiURL } from '@/api/api'
 import App from 'next/app'
 import { getStrapiMedia } from '@/api/media'
@@ -91,14 +91,16 @@ function MyApp({ Component, pageProps, projects }) {
   const [backgroundColor, setBackgroundColor] = useState("")
   const [color, setColor] = useState("")
   const [scrollbarStyle, setScrollbarStyle] = useState({ "--background-color": "#FFF", "--color": "#000" } as React.CSSProperties)
-
+  const [iconHeight, setIconHeight] = useState(102)
   const [onTransition, setTransition] = useState(true)
   const [logoMultiplyColor, setLogoMultiplyColor] = useState("none")
   const [iconList, setIconList] = useState([])
 
   const[started, setStarted] = useState(false)
 
-  const router = useRouter() 
+  const projectSelector = useRef(null)
+
+  const router = useRouter()
 
   let project = null
   let index = -1
@@ -204,12 +206,7 @@ function MyApp({ Component, pageProps, projects }) {
     }, [router.asPath])
 
     function startApp() {
-      gsap.set(".preloader", {opacity: 0})  
-      gsap.to(".cursor", {
-        rotateX: 35,
-        duration: 1,
-        ease: "Expo.easeOut"
-      })
+      gsap.set(".preloader", {opacity: 0})
       gsap.fromTo("#terminal", {
           rotateX: 90
         },
@@ -248,21 +245,23 @@ function MyApp({ Component, pageProps, projects }) {
     const steps = indexTarget - 4
 
     // const iconHeight = document.querySelector(".icon").offsetHeight + 2.5 * parseFloat(getComputedStyle(document.documentElement).fontSize)
-    const iconHeight = 102.5
+    // setIconHeight(projectSelector.current.offsetHeight - 113)
 
-    gsap.fromTo(`*[class^="hover-container-"]`, {
+    // console.log("ICON HEIGHT", projectSelector.current.offsetHeight - 113);
+    
+
+    if (steps > 0) {
+      setIconList([...iconList.slice(steps), ...iconList.slice(0, steps)])
+    } else {
+      setIconList([...iconList.slice(iconList.length + steps), ...iconList.slice(0, iconList.length + steps)])
+    }
+
+    console.log(iconHeight, steps);
+
+    gsap.from(`*[class^="hover-container-"]:not(.static)`, {
       y: "-=" + (iconHeight * -steps) + "px",
-    }, {
-      y: 0,
       duration: 1,
       stagger: 0.05,
-      onStart: () => {
-        if (steps > 0) {
-          setIconList([...iconList.slice(steps), ...iconList.slice(0, steps)])
-        } else {
-          setIconList([...iconList.slice(iconList.length + steps), ...iconList.slice(0, iconList.length + steps)])
-        }
-      }
     })
   
     if(typeof window !== 'undefined') {
@@ -358,38 +357,51 @@ function MyApp({ Component, pageProps, projects }) {
           </Link>
           <h2 style={{color: color}} className='ml-5 font-black text-4xl flex overflow-hidden'>ANDRIU GARCIA {project && project.title !== "ANDRIU GARCIA" ? <div className='ml-2 navbarProjectTitle'>✕ {project.title.toUpperCase()}</div> : ''}</h2>
           <div className='grow'></div>
-          <div className='mr-10 flex gap-3'>
-            <a href="/resume" className="font-mono" style={{ color: color }}>RESUME</a>
-            <a href="/contact" className="font-mono" style={{ color: color }}>CONTACT</a>
+          {
+            !started ? "" : <div className='mr-10 flex gap-3'>
+              <HoverCard type="resume" color={color} backgroundColor={backgroundColor}>
+                <a href="/resume" className="font-mono" style={{ color: color }}>RESUME</a>
+              </HoverCard>
+              
+              <a href="/contact" className="font-mono" style={{ color: color }}>CONTACT</a>
+            </div>
+          }
           </div>
-          </div>
-          <div className="absolute top-0 bottom-0 left-0 mt-[80px] w-20 border-r-8 flex flex-col gap-y-10 justify-center items-center" style={{ borderColor: color }}>
+          <div ref={projectSelector} className="absolute top-0 bottom-0 left-0 mt-[80px] w-20 border-r-8 flex flex-col gap-y-10 justify-center items-center" style={{ borderColor: color }}>
             {
               project && project.title !== "ANDRIU GARCIA" ? <div className='absolute w-full h-16 top-[50%]' style={{ backgroundColor: color, transform: "translateY(-50%)" }}></div> : ""
             }
-            <FontAwesomeIcon
-              onClick={() => goToProject("next")}
-              icon={faChevronUp}
-              className="absolute top-[20px]"
-              style={{ fontSize: 36, color: color }}
-            />
-            <div style={{height: "calc(200px + 12.5rem)", width: "100%", clipPath: "inset(0 0 0 0)"}}>
+            {
+              !started ? "" : <HoverCard project={projects[mod((index-1), projects.length)].attributes} type="project" y={null} color={color} backgroundColor={backgroundColor}>
+              <FontAwesomeIcon
+                onClick={() => goToProject("previous")}
+                icon={faChevronUp}
+                className="absolute top-[20px]"
+                style={{ fontSize: 36, color: color }}
+              />
+            </HoverCard>
+            }
+            <div style={{height: iconHeight * 5, width: "100%", clipPath: "inset(0 0 0 0)"}}>
               <div className='absolute top-0 bottom-0 left-[16px] gap-y-10'>
                 {
                   iconList.map((item, index) => {
-                    return (<HoverCard project={item?.attributes} type="project" color={color} backgroundColor={backgroundColor}>
-                      <div className='absolute top-0 icon w-10 h-10' style={{ transform: `translateY(${index * (102.5)}px)` }}><img src={getStrapiURL(item?.attributes?.logo?.logo.data.attributes.url)} onClick={() => goToProject(item, index)} className='w-10 h-10 z-10'></img></div>
+                    return (<HoverCard project={item?.attributes} type="project" y={index * (iconHeight)} color={color} backgroundColor={backgroundColor}>
+                      <div className='absolute top-0 icon w-10 h-10'><img src={getStrapiURL(item?.attributes?.logo?.logo.data.attributes.url)} onClick={() => goToProject(item, index)} className='w-10 h-10 z-10'></img></div>
                     </HoverCard>)
                   })
                 }
               </div>
             </div>
-            <FontAwesomeIcon
-              onClick={() => goToProject("previous")}
-              icon={faChevronDown}
-              className="absolute bottom-[20px]"
-              style={{ fontSize: 36, color: color }}
-            />
+            {
+              !started ? "" : <HoverCard project={projects[mod((index+1), projects.length)].attributes} type="project" y={null} color={color} backgroundColor={backgroundColor}>
+              <FontAwesomeIcon
+                onClick={() => goToProject("next")}
+                icon={faChevronDown}
+                className="absolute bottom-[20px]"
+                style={{ fontSize: 36, color: color }}
+              />
+            </HoverCard>
+            }
           </div>
           <div className="relative ml-20 mt-20" style={{height: 'calc(100% - 5rem)'}}>
             <div className='absolute tv-off inset-0 overflow-hidden' style={{ display: "none" }}>
@@ -397,7 +409,7 @@ function MyApp({ Component, pageProps, projects }) {
               <div className='tv-off__bottom absolute bottom-0 left-0 right-0 w-full h-0' style={{backgroundColor}}></div>
             </div>
             {
-              started ? <Component {...pageProps} goToProject={() => goToProject("next")} onTransition={onTransition} setTransition={setTransition}/> : ""
+              started ? <Component {...pageProps} goToProject={() => goToProject("next")} onTransition={onTransition} setTransition={setTransition} nextProject={projects[mod((index+1), projects.length)].attributes}/> : ""
             }
           </div>
         </div>

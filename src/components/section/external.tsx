@@ -65,7 +65,7 @@ export default ({ color, backgroundColor, name, url }) => {
     }
 
     return (
-        <div onMouseOver={hoverExternal} onMouseLeave={unhoverExternal} className="relative flex align-center justify-between pl-12 -mx-10 border-y-8 y-20" style={{borderColor: color, width: "calc(100% + 6rem)"}}>
+        <a href={url} target="_blank" onMouseOver={hoverExternal} onMouseLeave={unhoverExternal} className="relative flex align-center justify-between pl-12 -mx-10 border-y-8 y-20" style={{borderColor: color, width: "calc(100% + 6rem)"}}>
             <div className="py-6">
                 <div className="font-mono uppercase">Visit Page</div>
                 <div className="font-black text-3xl uppercase">{name}</div>
@@ -95,6 +95,6 @@ export default ({ color, backgroundColor, name, url }) => {
                 </div>
 
             </div>
-        </div>
+        </a>
     )
 }
