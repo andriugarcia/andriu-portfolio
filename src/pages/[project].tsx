@@ -353,9 +353,11 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
         <div className='grid grid-cols-8 grid-rows-6 h-full'>
           <div className='container3d relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
             {
-              (onTransition || !splineEnabled) ? <div className='w-full h-full' style={tvEffect}></div> : <></>
+              onTransition || !splineEnabled ? <div className='w-full h-full' style={tvEffect}></div> : <></>
             }
-            <Spline scene={project.spline} onLoad={splineLoaded} hidden={(onTransition || !splineEnabled)}/>
+            {
+              onTransition ? <></> : <Spline scene={project.spline} onLoad={splineLoaded} hidden={!splineEnabled}/>
+            }
           </div>
           <div className='row-start-1 row-end-5 col-start-7 col-end-9 overflow-hidden'>
             {

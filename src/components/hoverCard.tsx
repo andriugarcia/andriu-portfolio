@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import Marquee from "react-fast-marquee";
 import { log } from "console";
 import { getStrapiURL } from "@/api/api";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function hoveringElement(id) {
 
@@ -80,36 +82,43 @@ function FloatingProject ({type, id, project, color, backgroundColor}) {
           stack += tech.attributes.name.toUpperCase() + " // "
         })
     
-        useEffect(() => {
-            gsap.fromTo(".floating-project-" + id + " .rotating-logo", {
-                rotateX: -35,
-                rotateY: 0
-            }, {
-                rotateX: -35,
-                rotateY: 360,
-                duration: 10,
-                repeat: -1
-            })
-    
-        }, [])
     }
+
+    useEffect(() => {
+        gsap.fromTo(".floating-project-" + id + " .rotating-logo", {
+            rotateX: 35,
+            rotateY: 0
+        }, {
+            rotateX: -35,
+            rotateY: 360,
+            duration: 10,
+            repeat: -1
+        })
+
+    }, [])
 
 
     return ReactDOM.createPortal(
         <div className={'w-60 flex fixed' + ' floating-project-' + id + (type !== "project" ? " up" : "")} style={{transform: "rotateX(30deg)", left: "-50vw"}}>
             {
-                type === "project" ? <img className="rotating-logo w-20 h-20" src={getStrapiURL(project.logo?.logo.data.attributes.url)}></img> : 
-                <div className="rotating-logo h-20 w-10" style={{ backgroundColor: color }}></div>
+                type === "project" ? <img className="rotating-logo w-20 h-20" src={project.logo.logo}></img> : 
+                type === "resume" ? <div className="rotating-logo relative h-30 w-20" style={{ backgroundColor: color }}>
+                    <div className="text-xl absolute font-black bottom-0" style={{ color: backgroundColor }}>CV</div>
+                </div> : <FontAwesomeIcon
+                    className="rotating-logo"
+                    icon={faEnvelope}
+                    style={{ fontSize: 62, color: color }}
+                />
             }
             <div className="ml-2">
-                <div className="w-40 h-10 pl-2 uppercase text-lg font-black" style={{ backgroundColor, color }}>{type === "project" ? project.title : "Download Resumé"}</div>
+                <div className="w-40 h-10 pl-2 uppercase text-lg font-black" style={{ backgroundColor, color }}>{type === "project" ? project.title : type === "resume" ? "Download Resumé" : "SEND A MAIL"}</div>
                 <div className="w-40 h-5 mb-2" style={{ backgroundColor, color }}>
                 {
                     type === "project" ? <Marquee className='marquee font-mono' gradient={false} speed={40} style={{color, fontSize: '10px'}}>{stack}</Marquee> : ""
                 }
                 </div>
                 <div className="w-10 h-10 border-2 absolute top-20 right-10" style={{ backgroundColor: color, borderColor: backgroundColor }}></div>
-                <div className="w-5 h-5 border-2 absolute -bottom-30 left-8" style={{ backgroundColor: color, borderColor: backgroundColor }}></div>
+                <div className="w-5 h-5 border-2 absolute top-[-85px] left-8" style={{ backgroundColor: color, borderColor: backgroundColor }}></div>
                 <div className="w-10 h-10 border-2 absolute -bottom-20 left-5" style={{ backgroundColor: color, borderColor: backgroundColor }}></div>
             </div>
             <div className="h-20 w-10" style={{ backgroundColor: color }}></div>

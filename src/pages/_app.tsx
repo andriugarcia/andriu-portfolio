@@ -362,8 +362,9 @@ function MyApp({ Component, pageProps, projects }) {
               <HoverCard type="resume" color={color} backgroundColor={backgroundColor}>
                 <a href="/resume" className="font-mono" style={{ color: color }}>RESUME</a>
               </HoverCard>
-              
-              <a href="/contact" className="font-mono" style={{ color: color }}>CONTACT</a>
+              <HoverCard type="contact" color={color} backgroundColor={backgroundColor}>
+                <a href="mailto:contacto@andriugarcia.com" className="font-mono" style={{ color: color }}>CONTACT</a>
+              </HoverCard>
             </div>
           }
           </div>
@@ -376,7 +377,7 @@ function MyApp({ Component, pageProps, projects }) {
               <FontAwesomeIcon
                 onClick={() => goToProject("previous")}
                 icon={faChevronUp}
-                className="absolute top-[20px]"
+                className="absolute top-[20px] right-[18px]"
                 style={{ fontSize: 36, color: color }}
               />
             </HoverCard>
@@ -386,7 +387,7 @@ function MyApp({ Component, pageProps, projects }) {
                 {
                   iconList.map((item, index) => {
                     return (<HoverCard project={item?.attributes} type="project" y={index * (iconHeight)} color={color} backgroundColor={backgroundColor}>
-                      <div className='absolute top-0 icon w-10 h-10'><img src={getStrapiURL(item?.attributes?.logo?.logo.data.attributes.url)} onClick={() => goToProject(item, index)} className='w-10 h-10 z-10'></img></div>
+                      <div className='absolute top-0 icon w-10 h-10'><img src={item?.attributes?.logo?.logo} onClick={() => goToProject(item, index)} className='w-10 h-10 z-10'></img></div>
                     </HoverCard>)
                   })
                 }
@@ -397,7 +398,7 @@ function MyApp({ Component, pageProps, projects }) {
               <FontAwesomeIcon
                 onClick={() => goToProject("next")}
                 icon={faChevronDown}
-                className="absolute bottom-[20px]"
+                className="absolute bottom-[20px] right-[18px]"
                 style={{ fontSize: 36, color: color }}
               />
             </HoverCard>
@@ -414,7 +415,7 @@ function MyApp({ Component, pageProps, projects }) {
           </div>
         </div>
 
-        <svg className='fixed cursor top-0 left-0 pointer-events-none' width="64" height="64" version="1.1" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+        <svg className='fixed cursor top-0 left-0 pointer-events-none' style={{ zIndex: 999999 }} width="64" height="64" version="1.1" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
           <g>
             <path d="m155.45 28.816c0.09375-25.605 31.004-38.418 49.188-20.391l330.04 327.22c6.4961 6.4414 9.0586 14.41 8.5742 22.055v33.309c0 14.906-13.328 30.613-32.188 28.449l-188.14-21.594-117.76 148.17c-17.039 21.441-51.566 9.3203-51.465-18.066 0.625-166.39 1.1172-332.77 1.7422-499.15zm34.492 41.48c0.035157-10.242 12.398-15.371 19.676-8.1602l265.16 262.9c7.7812 7.7148 1.4414 20.918-9.4492 19.668l-141.64-16.254c-9.8984-1.1367-19.688 2.9141-25.887 10.719l-88.57 111.44c-6.8125 8.5742-20.621 3.7305-20.586-7.2227z" fill-rule="nonzero" fill={backgroundColor}/>
             <path d="m155.45 28.816c0.09375-25.605 31.004-38.418 49.188-20.391l330.04 327.22c6.4961 6.4414 9.0586 14.41 8.5742 22.055v33.309c0 14.906-13.328 30.613-32.188 28.449l-188.14-21.594-117.76 148.17c-17.039 21.441-51.566 9.3203-51.465-18.066 0.625-166.39 1.1172-332.77 1.7422-499.15zm34.492 41.48c0.035157-10.242 12.398-15.371 19.676-8.1602l265.16 262.9c7.7812 7.7148 1.4414 20.918-9.4492 19.668l-141.64-16.254c-9.8984-1.1367-19.688 2.9141-25.887 10.719l-88.57 111.44c-6.8125 8.5742-20.621 3.7305-20.586-7.2227z" fill-rule="evenodd" fill={color}/>

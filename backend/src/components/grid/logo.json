@@ -2,21 +2,15 @@
   "collectionName": "components_grid_logos",
   "info": {
     "displayName": "Logo",
-    "icon": "heart"
+    "icon": "heart",
+    "description": ""
   },
   "options": {},
   "attributes": {
-    "logo": {
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ],
-      "type": "media",
-      "multiple": false
-    },
     "backgroundColor": {
+      "type": "string"
+    },
+    "logo": {
       "type": "string"
     }
   }
