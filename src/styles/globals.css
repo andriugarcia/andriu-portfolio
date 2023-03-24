@@ -276,6 +276,10 @@ a {
   perspective: 1500px;
 }
 
+#terminal {
+  max-width: min(1273px, 80vw);
+}
+
 @keyframes b{
   100% {background-position: 50% 0, 60% 50%}
 }

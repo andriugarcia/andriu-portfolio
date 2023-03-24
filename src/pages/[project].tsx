@@ -239,10 +239,6 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
             id: i,
             name: contentBlocks[i].id.toUpperCase(),
           })
-          console.log("SECTION UPDATED", {
-            id: contentBlocks[i].id,
-            name: contentBlocks[i].id.toUpperCase(),
-          });
           
           break;
         }
@@ -261,7 +257,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
         })
       
         gsap.to(".floatingCard", {
-          right: -500,
+          right: "-25vw",
           top: 0.6 * window.innerHeight,
           zIndex: 20,
           rotation: 0,
@@ -371,8 +367,8 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
             }
           </div>
           <div className='row-start-5 row-end-7 col-start-1 col-end-9 border-y-8' style={{ borderColor: color }}>
-            <div className='h-1/3 border-b-8' style={{ borderColor: color }}>
-            <Marquee className='marquee' gradient={false} speed={40} pauseOnHover={true} style={{color: backgroundColor, backgroundColor: color, fontSize: '56px'}}>{onTransition ? "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" : stack}</Marquee>
+            <div className='h-1/3 flex items-center border-b-8' style={{ borderColor: color, backgroundColor: color }}>
+            <Marquee className='marquee' gradient={false} speed={40} style={{color: backgroundColor, fontSize: '56px'}}>{onTransition ? "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" : stack}</Marquee>
             </div>
             <div className='h-2/3 pl-10 flex items-center' style={{ borderColor: color }} >
               <h1 className='project-title overflow-y-hidden text-9xl font-black uppercase flex'>

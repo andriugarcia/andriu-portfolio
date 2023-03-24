@@ -47,7 +47,7 @@ function clickTerminal(e) {
   var x = e.clientX - rect.left; //x position within the element.
   var y = e.clientY - rect.top;  //y position within the element.
 
-  console.log("CLICK", (x / terminalElement.offsetWidth));
+  
   
 
   gsap.to("#terminal", {
@@ -91,7 +91,7 @@ function MyApp({ Component, pageProps, projects }) {
   const [backgroundColor, setBackgroundColor] = useState("")
   const [color, setColor] = useState("")
   const [scrollbarStyle, setScrollbarStyle] = useState({ "--background-color": "#FFF", "--color": "#000" } as React.CSSProperties)
-  const [iconHeight, setIconHeight] = useState(102)
+  const [iconHeight, setIconHeight] = useState(103)
   const [onTransition, setTransition] = useState(true)
   const [logoMultiplyColor, setLogoMultiplyColor] = useState("none")
   const [iconList, setIconList] = useState([])
@@ -123,6 +123,13 @@ function MyApp({ Component, pageProps, projects }) {
     const length = values.length
 
     const list = []
+
+    setIconHeight((document.querySelector(".project-bar").offsetHeight)/8)
+    
+    window.addEventListener("resize", () => {
+      setIconHeight((document.querySelector(".project-bar").offsetHeight)/8)
+    })
+  
 
     for(let i = -4; i <= 4; i += 1) {
       list.push(values[mod(startingPosition+i, length)])
@@ -162,6 +169,10 @@ function MyApp({ Component, pageProps, projects }) {
   useEffect(() => {
 
     setTransition(true)
+
+    if (document.querySelector(".project-indicator")) {
+      document.querySelector(".project-indicator").style.transform = `translateY(${document.querySelector(".project-bar").offsetHeight/2}px) translateY(-25%)`
+    }
     
     setBackgroundColor(project?.color || "#FFFCF6")
     setColor(project?.secondaryColor || "#1F1B20")
@@ -187,7 +198,7 @@ function MyApp({ Component, pageProps, projects }) {
 
     const filterStyle = hexToFilter(project?.color)
 
-    console.log(filterStyle);
+    
 
     setLogoMultiplyColor(filterStyle.filter)
 
@@ -231,7 +242,6 @@ function MyApp({ Component, pageProps, projects }) {
   let scrollIndex = 4
 
   function goToProject(project, indexTarget = -1) {
-    console.log(index);
     
     if (onTransition) return
     if (project === "next") {
@@ -240,6 +250,10 @@ function MyApp({ Component, pageProps, projects }) {
     } else if (project === "previous") {
       indexTarget = scrollIndex - 1
       project = iconList[indexTarget]
+    } else if (typeof project == "string") {
+      indexTarget = iconList.findIndex(p => p.attributes.title.toLowerCase() === project.toLowerCase())
+      project = iconList[indexTarget]
+      
     }
 
     const steps = indexTarget - 4
@@ -247,7 +261,7 @@ function MyApp({ Component, pageProps, projects }) {
     // const iconHeight = document.querySelector(".icon").offsetHeight + 2.5 * parseFloat(getComputedStyle(document.documentElement).fontSize)
     // setIconHeight(projectSelector.current.offsetHeight - 113)
 
-    // console.log("ICON HEIGHT", projectSelector.current.offsetHeight - 113);
+    // 
     
 
     if (steps > 0) {
@@ -256,7 +270,7 @@ function MyApp({ Component, pageProps, projects }) {
       setIconList([...iconList.slice(iconList.length + steps), ...iconList.slice(0, iconList.length + steps)])
     }
 
-    console.log(iconHeight, steps);
+    
 
     gsap.from(`*[class^="hover-container-"]:not(.static)`, {
       y: "-=" + (iconHeight * -steps) + "px",
@@ -292,7 +306,7 @@ function MyApp({ Component, pageProps, projects }) {
       })
 
       gsap.to(".floatingCard", {
-        right: -250,
+        right: "-25vw",
         bottom: -37,
         rotation: 0,
       })
@@ -323,7 +337,7 @@ function MyApp({ Component, pageProps, projects }) {
         
         <div className='gridmap fixed inset-[-500px]' style={{  transform: "rotateX(30deg)", filter: "blur(1px)", backgroundSize: "40px 40px", borderRight: `1px solid ${color}`, backgroundImage: `linear-gradient(to right, ${color} 1px, transparent 1px), linear-gradient(to bottom, ${color} 1px, transparent 1px)`}}></div>
         {/* <div className='hoverElement fixed w-60 h-20' style={{transform: "rotateX(30deg)", backgroundColor: "red", zIndex: 3000}}></div> */}
-        <FontAwesomeIcon
+        {/* <FontAwesomeIcon
           icon={faChevronUp}
           className="external-arrow-up fixed"
           style={{ fontSize: 420, color: color, top: "50vh", left: "50vw", opacity: 0, transform: "translate(-50%, -50%) rotateX(35deg)" }}
@@ -337,7 +351,7 @@ function MyApp({ Component, pageProps, projects }) {
           icon={faChevronUp}
           className="external-arrow-right fixed"
           style={{ fontSize: 420, color: color, top: "50vh", left: "50vw", opacity: 0, transform: "translate(-50%, -50%) rotate(45deg) rotateX(35deg)" }}
-        />
+        /> */}
 
 
         <div className='preloader fixed top-[50%] left-0 right-0 w-full flex flex-col items-center '>
@@ -350,7 +364,7 @@ function MyApp({ Component, pageProps, projects }) {
           <button className='start-button pa-2 font-mono font-bold' onClick={() => startApp()} style={{ color, letterSpacing: 0.5 }}> START</button>
         </div>
 
-        <div id="terminal" className='relative h-full w-full border-8' onClick={(e) => clickTerminal(e)} style={{ borderColor: color, maxWidth: 1273, backgroundColor, transform: "rotateX(30deg)" }}>
+        <div id="terminal" className='relative w-full border-8' onClick={(e) => clickTerminal(e)} style={{ borderColor: color, backgroundColor, transform: "rotateX(30deg)", height: "120%", marginTop: "-20vh" }}>
           <div id="navbar" className="absolute top-0 left-0 right-0 h-20 border-b-8 flex items-center justify-start" style={{ borderColor: color }}>
           <Link className='relative h-full aspect-square w-20 border-r-8' href="/" style={{ borderColor: color}}>
             <div className='logo' style={{filter: logoMultiplyColor }}></div>
@@ -360,7 +374,7 @@ function MyApp({ Component, pageProps, projects }) {
           {
             !started ? "" : <div className='mr-10 flex gap-3'>
               <HoverCard type="resume" color={color} backgroundColor={backgroundColor}>
-                <a href="/resume" className="font-mono" style={{ color: color }}>RESUME</a>
+                <a href="/resume-andriu-garcia.pdf" target="_blank" className="font-mono" style={{ color: color }}>RESUME</a>
               </HoverCard>
               <HoverCard type="contact" color={color} backgroundColor={backgroundColor}>
                 <a href="mailto:contacto@andriugarcia.com" className="font-mono" style={{ color: color }}>CONTACT</a>
@@ -368,9 +382,9 @@ function MyApp({ Component, pageProps, projects }) {
             </div>
           }
           </div>
-          <div ref={projectSelector} className="absolute top-0 bottom-0 left-0 mt-[80px] w-20 border-r-8 flex flex-col gap-y-10 justify-center items-center" style={{ borderColor: color }}>
+          <div ref={projectSelector} className="project-bar absolute top-0 bottom-0 left-0 mt-[80px] w-20 border-r-8 flex flex-col gap-y-10 justify-center items-center" style={{ borderColor: color }}>
             {
-              project && project.title !== "ANDRIU GARCIA" ? <div className='absolute w-full h-16 top-[50%]' style={{ backgroundColor: color, transform: "translateY(-50%)" }}></div> : ""
+              project && project.title !== "ANDRIU GARCIA" ? <div className='absolute project-indicator w-full top-0' style={{ backgroundColor: color, height: 72 }}></div> : ""
             }
             {
               !started ? "" : <HoverCard project={projects[mod((index-1), projects.length)].attributes} type="project" y={null} color={color} backgroundColor={backgroundColor}>
@@ -410,7 +424,7 @@ function MyApp({ Component, pageProps, projects }) {
               <div className='tv-off__bottom absolute bottom-0 left-0 right-0 w-full h-0' style={{backgroundColor}}></div>
             </div>
             {
-              started ? <Component {...pageProps} goToProject={() => goToProject("next")} onTransition={onTransition} setTransition={setTransition} nextProject={projects[mod((index+1), projects.length)].attributes}/> : ""
+              started ? <Component {...pageProps} goToProject={(p) => goToProject(p)} onTransition={onTransition} setTransition={setTransition} nextProject={projects[mod((index+1), projects.length)].attributes}/> : ""
             }
           </div>
         </div>

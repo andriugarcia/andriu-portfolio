@@ -3,13 +3,14 @@ import { useRouter } from 'next/router';
 import { RefObject, useEffect, useMemo, useRef, useState } from 'react';
 // import Image from 'next/image'
 import Marquee from "react-fast-marquee";
-import Spline from '@splinetool/react-spline';
+import Spline from "@/components/spline"
 import { fetchAPI } from '@/api/api';
 import Section from '@/components/section';
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
 import { gsap } from "gsap";
 import Assistant from '@/components/assistant';
+import FloatingCard from '@/components/floatingCard';
 
 type Params = {
   params: {
@@ -52,7 +53,7 @@ type Params = {
     }
   }
 
-export default function Home({project, categories, color, backgroundColor, onTransition, setTransition, ...params}) {
+export default function Home({project, categories, color, backgroundColor, goToProject, onTransition, setTransition, ...params}) {
   const [highlights, setHighlights] = useState([
     {highlight: "HIGHLIGHT 1"}, {highlight: "HIGHLIGHT 2"}
   ])
@@ -98,11 +99,35 @@ export default function Home({project, categories, color, backgroundColor, onTra
   const [content, setContent] = useState({})
   
   function highlightsUpdate(highlights) {
-    console.log("HIGHLIGHTS RECEIVED", highlights);
+    
     setHighlights(highlights)
   }
 
-  function splineLoaded() {
+  function itemSelected(itemSelected) {
+    
+    const clickRouting = {
+      "database": "Pantala",
+      "postgresql": "Olimaps",
+      "olimaps": "Olimaps",
+      "awwwards": "Zandbeek",
+      "mongodb": "Olimaps",
+      "zandbeek": "Zandbeek",
+      "trophy": "Zandbeek",
+      "e-commerce": "Pantala",
+      "social_network": "Olimaps",
+      "conversational": "Zandbeek",
+      "typescript": "Olimaps",
+      "nodejs": "Olimaps",
+    }
+
+    console.log("ITEM SELECTED", itemSelected);
+
+    goToProject(clickRouting[itemSelected])
+    
+  }
+
+  function splineLoaded(spline) {
+
     const distance = window.innerWidth - document.querySelector("main")?.getBoundingClientRect().right
     gsap.to(".floatingCard", {
       right: distance -100,
@@ -124,10 +149,10 @@ export default function Home({project, categories, color, backgroundColor, onTra
       </Head>
       <main className='h-full' style={{ color: color}} onScroll={handleScroll}>
         <div className='grid grid-cols-8 grid-rows-6 h-full'>
-          <div className='relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
+          <div className='container3d relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
             {
               // onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Assistant categories={categories} highlightsUpdate={highlightsUpdate}></Assistant>
-              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Spline scene={project.spline} onLoad={splineLoaded}/>
+              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Spline scene={project.spline} onLoad={splineLoaded} onItemSelected={itemSelected}/>
             }
           </div>
           <div className='row-start-1 row-end-5 col-start-7 col-end-9 overflow-hidden'>
@@ -142,8 +167,8 @@ export default function Home({project, categories, color, backgroundColor, onTra
             }
           </div>
           <div className='row-start-5 row-end-7 col-start-1 col-end-9 border-y-8' style={{ borderColor: color }}>
-            <div className='h-1/3 border-b-8' style={{ borderColor: color }}>
-            <Marquee className='marquee' gradient={false} speed={40} pauseOnHover={true} style={{color: backgroundColor, backgroundColor: color, fontSize: '56px'}}>{onTransition ? "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" : project.marquee}</Marquee>
+            <div className='h-1/3 flex items-center border-b-8' style={{ borderColor: color, backgroundColor: color }}>
+              <Marquee className='marquee' gradient={false} speed={40} pauseOnHover={true} style={{color: backgroundColor, fontSize: '56px'}}>{onTransition ? "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" : project.marquee}</Marquee>
             </div>
             <div className='h-2/3 pl-10 flex items-center' style={{ borderColor: color }} >
               <h1 className='project-title overflow-y-hidden text-7xl font-black uppercase flex'>
@@ -154,7 +179,7 @@ export default function Home({project, categories, color, backgroundColor, onTra
             </div>
           </div>
         </div>
-
+        <FloatingCard project={{ title: "ABOUT ME", description: "Creating outstanding web experiences" }} color={color} backgroundColor={backgroundColor}></FloatingCard>
       </main>
     </>
   )

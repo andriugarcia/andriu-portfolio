@@ -1,17 +1,28 @@
-import Spline from '@splinetool/react-spline';
+import React, { Suspense, useState } from 'react';
+const Spline = React.lazy(() => import('@splinetool/react-spline'));
+
 import ReactDOM from 'react-dom';
 
 let width = null
 let height = null
 let xPosition = null
 
-export default function ({scene, onLoad, hidden}) {
+let target = null
+let splineClickTimeout = null
 
-    const container3d = document.querySelector(".container3d")
-    const rect = container3d?.getBoundingClientRect()
+export default function ({scene, onLoad, onItemSelected, hidden}) {
 
-    function onMouseDown() {
-        console.log("Click 3d object");
+    let container3d = document.querySelector(".container3d")
+    let rect = container3d?.getBoundingClientRect()
+
+    const [tvEffect, setTvEffect] = useState({
+        background: `repeating-radial-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 50% 0/2500px 2500px, repeating-conic-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 60% 60%/2500px 2500px`,
+        backgroundBlendMode: "difference",
+        animation: "b .2s infinite alternate"
+      })
+
+    function onMouseDown(e) {
+        onItemSelected(e.target.name)
     }
 
     if (typeof window === "object") {
@@ -22,13 +33,29 @@ export default function ({scene, onLoad, hidden}) {
         }
 
         if (!height || height < 400) {
-            height = rect?.height
+            height = rect?.height + 40
         }
+        
+        window.addEventListener("resize", () => {
+            container3d = document.querySelector(".container3d")
+            rect = container3d?.getBoundingClientRect()
+
+            width = rect?.width
+            xPosition = rect?.x
+            height = rect?.height
+    
+            document.querySelector(".spline-container").style.top = (rect?.y - 40) + "px"
+            document.querySelector(".spline-container").style.left = xPosition + "px"
+            document.querySelector(".spline-container").style.width = width + "px"
+            document.querySelector(".spline-container").style.height = (height + 40) + "px"
+        })
 
         
         return ReactDOM.createPortal(
-            <div className="fixed" style={{ top: rect?.y, left: xPosition, width, height, clipPath: "polygon(15% 0%, 91% 0%, 97% 100%, 3% 100%)", visibility: hidden ? "hidden" : "visible" }}>
-                <Spline scene={scene} onLoad={onLoad} onMouseDown={onMouseDown}></Spline>
+            <div className="spline-container fixed" style={{ top: rect?.y - 40, left: xPosition, width, height, clipPath: "polygon(15% 0%, 91% 0%, 99% 100%, 0% 100%)", visibility: hidden ? "hidden" : "visible" }}>
+                <Suspense fallback={<div className='w-full h-full' style={tvEffect}></div>}>
+                    <Spline scene={scene} onLoad={onLoad} onMouseDown={onMouseDown}></Spline>
+                </Suspense>
             </div>
         , document.querySelector(".crt"))
     }

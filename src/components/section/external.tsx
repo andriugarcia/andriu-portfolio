@@ -6,27 +6,27 @@ import Image from 'next/image';
 export default ({ color, backgroundColor, name, url }) => {
     
     function hoverExternal() {
-        gsap.set(".external-arrow-up, .external-arrow-right, .external-arrow-left", {opacity: 1})
-        gsap.to(".external-arrow-up", {
-            y: "-40vh",
-            duration: 1,
-            ease: "Back.easeOut"
-        }
-        )
-        gsap.to(".external-arrow-left", {
-            x: "-30vw",
-            y: "-30vh",
-            duration: 1,
-            ease: "Back.easeOut"
-        }
-        )
-        gsap.to(".external-arrow-right", {
-            x: "+30vw",
-            y: "-30vh",
-            duration: 1,
-            ease: "Back.easeOut"
-        }
-        )
+        // gsap.set(".external-arrow-up, .external-arrow-right, .external-arrow-left", {opacity: 1})
+        // gsap.to(".external-arrow-up", {
+        //     y: "-40vh",
+        //     duration: 1,
+        //     ease: "Back.easeOut"
+        // }
+        // )
+        // gsap.to(".external-arrow-left", {
+        //     x: "-30vw",
+        //     y: "-30vh",
+        //     duration: 1,
+        //     ease: "Back.easeOut"
+        // }
+        // )
+        // gsap.to(".external-arrow-right", {
+        //     x: "+30vw",
+        //     y: "-30vh",
+        //     duration: 1,
+        //     ease: "Back.easeOut"
+        // }
+        // )
 
         gsap.to(".external-overlay", {
             clipPath: "inset(0 0 0 0%)",
@@ -41,27 +41,27 @@ export default ({ color, backgroundColor, name, url }) => {
             duration: 1,
             ease: "Expo.easeOut"
         })
-        gsap.to(".external-arrow-up", {
-            x: 0,
-            y: 0,
-            xPercent: -50,
-            yPercent: -50,
-            duration: 1,
-        })
-        gsap.to(".external-arrow-left", {
-            x: 0,
-            y: 0,
-            xPercent: -50,
-            yPercent: -50,
-            duration: 1,
-        })
-        gsap.to(".external-arrow-right", {
-            x: 0,
-            y: 0,
-            xPercent: -50,
-            yPercent: -50,
-            duration: 1,
-        })
+        // gsap.to(".external-arrow-up", {
+        //     x: 0,
+        //     y: 0,
+        //     xPercent: -50,
+        //     yPercent: -50,
+        //     duration: 1,
+        // })
+        // gsap.to(".external-arrow-left", {
+        //     x: 0,
+        //     y: 0,
+        //     xPercent: -50,
+        //     yPercent: -50,
+        //     duration: 1,
+        // })
+        // gsap.to(".external-arrow-right", {
+        //     x: 0,
+        //     y: 0,
+        //     xPercent: -50,
+        //     yPercent: -50,
+        //     duration: 1,
+        // })
     }
 
     return (

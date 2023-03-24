@@ -35,7 +35,7 @@ export default ({categories, highlightsUpdate}) => {
 
     let i = 0
     function updateTerminal(text) {
-        console.log(terminal + text.charAt(i));
+        
         
         if (i < text.length) {
             setTerminal(terminal + text.substring(0, i))
@@ -47,7 +47,7 @@ export default ({categories, highlightsUpdate}) => {
     }
 
     function setCategory(index) {
-        console.log("CLICK CATEGORY", categories[index]);
+        
         
         updateTerminal("> Looking highlights for this area")
         // updateTerminal("> Looking some interesting tasks done in this area")

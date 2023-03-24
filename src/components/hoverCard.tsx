@@ -14,8 +14,6 @@ function hoveringElement(id) {
   
     const hoverElement = document.querySelector<HTMLElement>('.hover-container-' + id)
     const rect = hoverElement?.getBoundingClientRect()
-
-    console.log(hoverElement, rect.y);
     
     
     // gsap.fromTo('.floating-project-' + id, {
@@ -28,10 +26,6 @@ function hoveringElement(id) {
     //   duration: 1,
     //   ease: "Expo.easeOut"
     // })
-
-    console.log("COMPUTED VALUE", window
-    .getComputedStyle(hoverElement)
-    .getPropertyValue('transform'));
     
     
     gsap.set('.floating-project-' + id + ":not(.up)", {

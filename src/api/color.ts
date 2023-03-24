@@ -293,7 +293,7 @@ class Color {
   }
 
   export default function hexToFilter(hex) {
-      console.log(hex);
+      
       const rgb = hexToRgb(hex);
     
       
