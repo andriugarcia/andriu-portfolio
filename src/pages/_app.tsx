@@ -140,7 +140,8 @@ function MyApp({ Component, pageProps, projects }) {
     window.addEventListener('mousemove', positionElement)
 
     gsap.set("#terminal, .gridmap", {
-      rotateX: 90
+      rotateX: 85,
+      visibility: "hidden"
     })
 
     gsap.fromTo(".horizon-line", {
@@ -218,6 +219,7 @@ function MyApp({ Component, pageProps, projects }) {
 
     function startApp() {
       gsap.set(".preloader", {opacity: 0})
+      gsap.set("#terminal, .gridmap", {visibility: "visible"})
       gsap.fromTo("#terminal", {
           rotateX: 90
         },
@@ -354,7 +356,7 @@ function MyApp({ Component, pageProps, projects }) {
         /> */}
 
 
-        <div className='preloader fixed top-[50%] left-0 right-0 w-full flex flex-col items-center '>
+        <div className='preloader fixed top-[50%] left-0 right-0 w-full flex flex-col items-center' style={{ transform: "translateY(-50%)" }}>
           <div className='overflow-hidden text-4xl font-black uppercase flex' style={{ color }}>
             {
               "ADDING A NEW PERSPECTIVE TO WEB DEVELOPMENT".split("").map((char: String) => (<div className='preloader-char' style={{marginRight: char == ' ' ? "12px" : "0"}}>{char}</div>))
@@ -364,7 +366,7 @@ function MyApp({ Component, pageProps, projects }) {
           <button className='start-button pa-2 font-mono font-bold' onClick={() => startApp()} style={{ color, letterSpacing: 0.5 }}> START</button>
         </div>
 
-        <div id="terminal" className='relative w-full border-8' onClick={(e) => clickTerminal(e)} style={{ borderColor: color, backgroundColor, transform: "rotateX(30deg)", height: "120%", marginTop: "-20vh" }}>
+        <div id="terminal" className='relative w-full border-8' onClick={(e) => clickTerminal(e)} style={{ borderColor: color, visibility: "hidden", backgroundColor, transform: "rotateX(30deg)", height: "120%", marginTop: "-20vh" }}>
           <div id="navbar" className="absolute top-0 left-0 right-0 h-20 border-b-8 flex items-center justify-start" style={{ borderColor: color }}>
           <Link className='relative h-full aspect-square w-20 border-r-8' href="/" style={{ borderColor: color}}>
             <div className='logo' style={{filter: logoMultiplyColor }}></div>
@@ -429,13 +431,13 @@ function MyApp({ Component, pageProps, projects }) {
           </div>
         </div>
 
+
         <svg className='fixed cursor top-0 left-0 pointer-events-none' style={{ zIndex: 999999 }} width="64" height="64" version="1.1" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
           <g>
             <path d="m155.45 28.816c0.09375-25.605 31.004-38.418 49.188-20.391l330.04 327.22c6.4961 6.4414 9.0586 14.41 8.5742 22.055v33.309c0 14.906-13.328 30.613-32.188 28.449l-188.14-21.594-117.76 148.17c-17.039 21.441-51.566 9.3203-51.465-18.066 0.625-166.39 1.1172-332.77 1.7422-499.15zm34.492 41.48c0.035157-10.242 12.398-15.371 19.676-8.1602l265.16 262.9c7.7812 7.7148 1.4414 20.918-9.4492 19.668l-141.64-16.254c-9.8984-1.1367-19.688 2.9141-25.887 10.719l-88.57 111.44c-6.8125 8.5742-20.621 3.7305-20.586-7.2227z" fill-rule="nonzero" fill={backgroundColor}/>
             <path d="m155.45 28.816c0.09375-25.605 31.004-38.418 49.188-20.391l330.04 327.22c6.4961 6.4414 9.0586 14.41 8.5742 22.055v33.309c0 14.906-13.328 30.613-32.188 28.449l-188.14-21.594-117.76 148.17c-17.039 21.441-51.566 9.3203-51.465-18.066 0.625-166.39 1.1172-332.77 1.7422-499.15zm34.492 41.48c0.035157-10.242 12.398-15.371 19.676-8.1602l265.16 262.9c7.7812 7.7148 1.4414 20.918-9.4492 19.668l-141.64-16.254c-9.8984-1.1367-19.688 2.9141-25.887 10.719l-88.57 111.44c-6.8125 8.5742-20.621 3.7305-20.586-7.2227z" fill-rule="evenodd" fill={color}/>
           </g>
           </svg>
-
 
       </div>
     </>

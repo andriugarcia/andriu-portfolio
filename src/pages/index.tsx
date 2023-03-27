@@ -54,10 +54,6 @@ type Params = {
   }
 
 export default function Home({project, categories, color, backgroundColor, goToProject, onTransition, setTransition, ...params}) {
-  const [highlights, setHighlights] = useState([
-    {highlight: "HIGHLIGHT 1"}, {highlight: "HIGHLIGHT 2"}
-  ])
-  
   const router = useRouter() 
   const [tvEffect, setTvEffect] = useState({
     background: `repeating-radial-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 50% 0/2500px 2500px, repeating-conic-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 60% 60%/2500px 2500px`,
@@ -97,11 +93,7 @@ export default function Home({project, categories, color, backgroundColor, goToP
   }
 
   const [content, setContent] = useState({})
-  
-  function highlightsUpdate(highlights) {
-    
-    setHighlights(highlights)
-  }
+
 
   function itemSelected(itemSelected) {
     
@@ -157,7 +149,7 @@ export default function Home({project, categories, color, backgroundColor, goToP
           </div>
           <div className='row-start-1 row-end-5 col-start-7 col-end-9 overflow-hidden'>
             {
-              highlights.map(({highlight}) => {
+              project.highlights.map(({highlight}) => {
                 return (
                   <div className='p-6'>
                     <div className='highlight text-xl'>{highlight.toUpperCase()}</div>
@@ -168,7 +160,7 @@ export default function Home({project, categories, color, backgroundColor, goToP
           </div>
           <div className='row-start-5 row-end-7 col-start-1 col-end-9 border-y-8' style={{ borderColor: color }}>
             <div className='h-1/3 flex items-center border-b-8' style={{ borderColor: color, backgroundColor: color }}>
-              <Marquee className='marquee' gradient={false} speed={40} pauseOnHover={true} style={{color: backgroundColor, fontSize: '56px'}}>{onTransition ? "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" : project.marquee}</Marquee>
+              <Marquee className='marquee' gradient={false} speed={40} style={{color: backgroundColor, fontSize: '56px'}}>{onTransition ? "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" : project.marquee}</Marquee>
             </div>
             <div className='h-2/3 pl-10 flex items-center' style={{ borderColor: color }} >
               <h1 className='project-title overflow-y-hidden text-7xl font-black uppercase flex'>
@@ -179,7 +171,7 @@ export default function Home({project, categories, color, backgroundColor, goToP
             </div>
           </div>
         </div>
-        <FloatingCard project={{ title: "ABOUT ME", description: "Creating outstanding web experiences" }} color={color} backgroundColor={backgroundColor}></FloatingCard>
+        <FloatingCard project={{ title: "ABOUT ME", description: project.description }} color={color} backgroundColor={backgroundColor}></FloatingCard>
       </main>
     </>
   )

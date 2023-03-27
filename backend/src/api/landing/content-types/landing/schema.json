@@ -33,6 +33,9 @@
     },
     "backgroundColor": {
       "type": "string"
+    },
+    "description": {
+      "type": "text"
     }
   }
 }

@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_shared_textlines",
+  "info": {
+    "displayName": "Textline",
+    "icon": "bars"
+  },
+  "options": {},
+  "attributes": {
+    "textline": {
+      "type": "string"
+    }
+  }
+}

@@ -182,16 +182,19 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
 
     let actualItem = null;
     project.content.forEach((item: any) => {
+      console.log(item);
+      
       if (item.__component === "section.section-name") {
         
-        contentAux[item.name] = {}
+        contentAux[item.name] = []
         actualItem = contentAux[item.name];
       } else {
-        actualItem[
-          item.__component.substr(item.__component.indexOf(".") + 1)
-        ] = item;
+        actualItem.push(item);
       }
     });
+
+    console.log(contentAux);
+    
 
     setContent(contentAux)
 
@@ -288,7 +291,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
             duration: 3,
             ease: "linear",
             overwrite: true,
-            onComplete: () => goToProject()
+            onComplete: () => goToProject("next")
           })
         }
   
@@ -385,6 +388,8 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
           <div className='w-[70%]'>
             {
               Object.entries(content).map((section) => {
+                console.log("SECTION", section);
+                
                 return (
                   <div id={section[0].toLowerCase()} className="contentBlock flex">
                     <div className="relative border-8 -ml-4 -mt-2 w-20 mh-40" style={{borderColor: color}}>
@@ -444,7 +449,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
                       <div className='recordingSquare w-6 h-6 border-4' style={{borderColor: color, backgroundColor: blinking ? color : backgroundColor}}></div>
                     </div>
                     <Marquee className='marquee font-mono uppercase' gradient={false} speed={12} style={{color, fontSize: '12px'}}>
-                      { [...Array(8)].map((e, i) => " " + currentSection.name + " · ") }
+                      { [...Array(32)].map((e, i) => " " + currentSection.name + " · ") }
                     </Marquee>
                     <div className='border-4 relative' style={{ width: "100%", height: 32, borderColor: color }}>
                       <div className='scrollStatus absolute right-0 top-0 bottom-0' style={{backgroundColor: color, left: 100 - scrollStatus + "%"}}></div>

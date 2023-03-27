@@ -49,7 +49,9 @@
         "shared.slider",
         "shared.video",
         "shared.external",
-        "shared.recommendation"
+        "shared.recommendation",
+        "shared.image",
+        "shared.objective"
       ]
     },
     "subtitle": {

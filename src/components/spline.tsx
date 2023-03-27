@@ -1,5 +1,5 @@
-import React, { Suspense, useState } from 'react';
-const Spline = React.lazy(() => import('@splinetool/react-spline'));
+import React, { useState } from 'react';
+import Spline from "@splinetool/react-spline";
 
 import ReactDOM from 'react-dom';
 
@@ -23,6 +23,10 @@ export default function ({scene, onLoad, onItemSelected, hidden}) {
 
     function onMouseDown(e) {
         onItemSelected(e.target.name)
+    }
+
+    function onHover(e) {
+        console.log("Hovering", e.target)
     }
 
     if (typeof window === "object") {
@@ -53,9 +57,7 @@ export default function ({scene, onLoad, onItemSelected, hidden}) {
         
         return ReactDOM.createPortal(
             <div className="spline-container fixed" style={{ top: rect?.y - 40, left: xPosition, width, height, clipPath: "polygon(15% 0%, 91% 0%, 99% 100%, 0% 100%)", visibility: hidden ? "hidden" : "visible" }}>
-                <Suspense fallback={<div className='w-full h-full' style={tvEffect}></div>}>
-                    <Spline scene={scene} onLoad={onLoad} onMouseDown={onMouseDown}></Spline>
-                </Suspense>
+                <Spline scene={scene} onLoad={onLoad} onMouseDown={onMouseDown} onMouseHover={onHover}></Spline>
             </div>
         , document.querySelector(".crt"))
     }
