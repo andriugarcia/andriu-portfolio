@@ -252,11 +252,11 @@ a {
   left: 0;
   bottom: 0;
   right: 0;
-  background: rgba(18, 16, 16, 0.1);
+  background: rgba(18, 16, 16, 0.05);
   opacity: 0;
   z-index: 1000;
   pointer-events: none;
-  animation: flicker 0.15s infinite;
+  animation: flicker 0.5s infinite;
 }
 .crt::before {
   content: " ";

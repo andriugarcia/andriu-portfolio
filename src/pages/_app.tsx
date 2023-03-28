@@ -90,6 +90,7 @@ const positionElement = (e)=> {
 function MyApp({ Component, pageProps, projects }) {
   const [backgroundColor, setBackgroundColor] = useState("")
   const [color, setColor] = useState("")
+  const [isMobile, setMobile] = useState(false)
   const [scrollbarStyle, setScrollbarStyle] = useState({ "--background-color": "#FFF", "--color": "#000" } as React.CSSProperties)
   const [iconHeight, setIconHeight] = useState(103)
   const [onTransition, setTransition] = useState(true)
@@ -123,6 +124,8 @@ function MyApp({ Component, pageProps, projects }) {
     const length = values.length
 
     const list = []
+
+    setMobile(window.matchMedia("(max-width: 600px)").matches)
 
     setIconHeight((document.querySelector(".project-bar").offsetHeight)/8)
     
@@ -276,7 +279,7 @@ function MyApp({ Component, pageProps, projects }) {
 
     gsap.from(`*[class^="hover-container-"]:not(.static)`, {
       y: "-=" + (iconHeight * -steps) + "px",
-      duration: 1,
+      duration: 0.5,
       stagger: 0.05,
     })
   
@@ -292,18 +295,18 @@ function MyApp({ Component, pageProps, projects }) {
         y: 0
       }, {
         y: '-100vh',
-        duration: 1,
+        duration: 0.3,
         ease: 'Expo.easeInOut',
-        stagger: 0.10
+        stagger: 0.15
       })
 
       gsap.fromTo('.title-char', {
         yPercent: 0
       }, {
         yPercent: 110,
-        duration: 1,
+        duration: 0.3,
         ease: 'Expo.easeInOut',
-        stagger: 0.05,
+        stagger: 0.025,
         onComplete: () => router.push(path)
       })
 
@@ -325,7 +328,7 @@ function MyApp({ Component, pageProps, projects }) {
         })
         timeline.to(".tv-off__top, .tv-off__bottom", {
           height: "50%",
-          duration: .5,
+          duration: .25,
           ease: "Expo.easeOut"
         })
       }
@@ -335,8 +338,14 @@ function MyApp({ Component, pageProps, projects }) {
   }
   return (
     <>
+      <title>Andriu Garcia</title>
       <div className={`crt h-[100vh] cursor-none p-10 ${league.variable} overflow-hidden flex justify-center`} style={ scrollbarStyle } onMouseMove={(e) => overTerminal(e)}>
-        
+        {
+          isMobile ?
+          <div className="fixed inset-0 p-4 border-6 flex items-center justify-center" style={{ borderColor: color, backgroundColor, zIndex: 6000 }}>
+            <div className='font-mono' style={{ color }}>This website is not compatible with phone devices</div>
+          </div> : ""
+        }
         <div className='gridmap fixed inset-[-500px]' style={{  transform: "rotateX(30deg)", filter: "blur(1px)", backgroundSize: "40px 40px", borderRight: `1px solid ${color}`, backgroundImage: `linear-gradient(to right, ${color} 1px, transparent 1px), linear-gradient(to bottom, ${color} 1px, transparent 1px)`}}></div>
         {/* <div className='hoverElement fixed w-60 h-20' style={{transform: "rotateX(30deg)", backgroundColor: "red", zIndex: 3000}}></div> */}
         {/* <FontAwesomeIcon
@@ -375,12 +384,8 @@ function MyApp({ Component, pageProps, projects }) {
           <div className='grow'></div>
           {
             !started ? "" : <div className='mr-10 flex gap-3'>
-              <HoverCard type="resume" color={color} backgroundColor={backgroundColor}>
-                <a href="/resume-andriu-garcia.pdf" target="_blank" className="font-mono" style={{ color: color }}>RESUME</a>
-              </HoverCard>
-              <HoverCard type="contact" color={color} backgroundColor={backgroundColor}>
-                <a href="mailto:contacto@andriugarcia.com" className="font-mono" style={{ color: color }}>CONTACT</a>
-              </HoverCard>
+              <a href="/resume-andriu-garcia.pdf" target="_blank" className="font-mono" style={{ color: color }}>RESUME</a>
+              <a href="mailto:contacto@andriugarcia.com" className="font-mono" style={{ color: color }}>CONTACT</a>
             </div>
           }
           </div>
