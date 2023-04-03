@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_blocks_key_values",
+  "info": {
+    "displayName": "Key-value",
+    "icon": "angle-right",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "key": {
+      "type": "string"
+    },
+    "value": {
+      "type": "text"
+    }
+  }
+}

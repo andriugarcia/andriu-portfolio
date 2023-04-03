@@ -51,19 +51,13 @@
         "shared.external",
         "shared.recommendation",
         "shared.image",
-        "shared.objective"
+        "shared.objective",
+        "shared.carousel",
+        "shared.desplegable"
       ]
     },
     "subtitle": {
       "type": "string"
-    },
-    "showcase": {
-      "type": "dynamiczone",
-      "components": [
-        "blocks.image",
-        "blocks.info",
-        "blocks.video"
-      ]
     },
     "technologies": {
       "type": "relation",

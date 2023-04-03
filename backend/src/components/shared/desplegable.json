@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_shared_desplegables",
+  "info": {
+    "displayName": "Desplegable",
+    "icon": "align-right"
+  },
+  "options": {},
+  "attributes": {
+    "item": {
+      "displayName": "Key-value",
+      "type": "component",
+      "repeatable": true,
+      "component": "blocks.key-value"
+    }
+  }
+}

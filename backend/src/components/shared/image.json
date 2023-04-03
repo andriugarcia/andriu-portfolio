@@ -2,11 +2,15 @@
   "collectionName": "components_shared_images",
   "info": {
     "displayName": "Image",
-    "icon": "file-image"
+    "icon": "file-image",
+    "description": ""
   },
   "options": {},
   "attributes": {
     "url": {
+      "type": "string"
+    },
+    "caption": {
       "type": "string"
     }
   }

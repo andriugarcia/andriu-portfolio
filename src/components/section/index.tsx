@@ -6,7 +6,9 @@ import Image from "@/components/image"
 import External from "@/components/section/external"
 import { log } from 'console'
 import Recommendation from './recommendation'
+import Carousel from './carousel'
 import Objective from './objective'
+import Desplegable from './desplegable'
 
 const videoStyle = {}
 
@@ -30,6 +32,10 @@ function renderBlock(index, type, block, color, backgroundColor) {
             return <li key={index}><video autoPlay muted loop style={videoStyle} src={block.url}></video></li>
         case "shared.objective":
             return <li key={index}><Objective block={block} color={color} backgroundColor={backgroundColor}></Objective></li>
+        case "shared.carousel":
+            return <li key={index}><Carousel images={block.images}></Carousel></li>
+        case "shared.desplegable":
+            return <li key={index}><Desplegable items={block.item} color={color} backgroundColor={backgroundColor}></Desplegable></li>
         default:
             return <li key={index}><div></div></li>
     }

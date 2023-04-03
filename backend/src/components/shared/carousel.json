@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_shared_carousels",
+  "info": {
+    "displayName": "Carousel",
+    "icon": "layer-group"
+  },
+  "options": {},
+  "attributes": {
+    "images": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.image"
+    }
+  }
+}
