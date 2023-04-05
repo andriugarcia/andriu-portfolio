@@ -81,9 +81,9 @@ const positionElement = (e)=> {
   const mouseY = e.clientY - 5;
   const mouseX = e.clientX - 10;
 
-  const cursor = document.querySelector<HTMLElement>(".cursor")
+  // const cursor = document.querySelector<HTMLElement>(".cursor")
 
-  cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+  // cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
 
 }
 
@@ -339,7 +339,7 @@ function MyApp({ Component, pageProps, projects }) {
   return (
     <>
       <title>Andriu Garcia</title>
-      <div className={`crt h-[100vh] cursor-none p-10 ${league.variable} overflow-hidden flex justify-center`} style={ scrollbarStyle } onMouseMove={(e) => overTerminal(e)}>
+      <div className={`crt h-[100vh] p-10 ${league.variable} overflow-hidden flex justify-center`} style={ scrollbarStyle } onMouseMove={(e) => overTerminal(e)}>
         {
           isMobile ?
           <div className="fixed inset-0 p-4 border-6 flex items-center justify-center" style={{ borderColor: color, backgroundColor, zIndex: 6000 }}>
@@ -437,12 +437,12 @@ function MyApp({ Component, pageProps, projects }) {
         </div>
 
 
-        <svg className='fixed cursor top-0 left-0 pointer-events-none' style={{ zIndex: 999999 }} width="64" height="64" version="1.1" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+        {/* <svg className='fixed cursor top-0 left-0 pointer-events-none' style={{ zIndex: 999999 }} width="64" height="64" version="1.1" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
           <g>
             <path d="m155.45 28.816c0.09375-25.605 31.004-38.418 49.188-20.391l330.04 327.22c6.4961 6.4414 9.0586 14.41 8.5742 22.055v33.309c0 14.906-13.328 30.613-32.188 28.449l-188.14-21.594-117.76 148.17c-17.039 21.441-51.566 9.3203-51.465-18.066 0.625-166.39 1.1172-332.77 1.7422-499.15zm34.492 41.48c0.035157-10.242 12.398-15.371 19.676-8.1602l265.16 262.9c7.7812 7.7148 1.4414 20.918-9.4492 19.668l-141.64-16.254c-9.8984-1.1367-19.688 2.9141-25.887 10.719l-88.57 111.44c-6.8125 8.5742-20.621 3.7305-20.586-7.2227z" fill-rule="nonzero" fill={backgroundColor}/>
             <path d="m155.45 28.816c0.09375-25.605 31.004-38.418 49.188-20.391l330.04 327.22c6.4961 6.4414 9.0586 14.41 8.5742 22.055v33.309c0 14.906-13.328 30.613-32.188 28.449l-188.14-21.594-117.76 148.17c-17.039 21.441-51.566 9.3203-51.465-18.066 0.625-166.39 1.1172-332.77 1.7422-499.15zm34.492 41.48c0.035157-10.242 12.398-15.371 19.676-8.1602l265.16 262.9c7.7812 7.7148 1.4414 20.918-9.4492 19.668l-141.64-16.254c-9.8984-1.1367-19.688 2.9141-25.887 10.719l-88.57 111.44c-6.8125 8.5742-20.621 3.7305-20.586-7.2227z" fill-rule="evenodd" fill={color}/>
           </g>
-          </svg>
+          </svg> */}
 
       </div>
     </>

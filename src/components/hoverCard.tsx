@@ -127,7 +127,7 @@ export default ({children, type, project, color, backgroundColor, y}) => {
 
     return (
         <div className={'hover-container-' + id + (y ? '' : ' static')} style={{ transform: type === "project" && y ? `translateY(${y}px)` : "" }} onMouseOver={() => hoveringElement(id)} onMouseLeave={() => leavingElement(id)}>
-            { children }
+            <div className="cursor-pointer">{ children }</div>
             <FloatingProject id={id} type={type} project={project} color={color} backgroundColor={backgroundColor}></FloatingProject>
         </div>
     )

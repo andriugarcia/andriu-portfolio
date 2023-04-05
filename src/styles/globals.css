@@ -315,6 +315,25 @@ section p {
   text-shadow: none !important;
 }
 
+section ul {
+  font-size: 2vmin;
+  animation: none !important;
+  text-shadow: none !important;
+}
+
+li:not(.section-item) {
+  padding: 16px;
+  padding-left: 2.5em;
+}
+
+li:not(.section-item):before {
+  content: "→";
+  font-size: 32px;
+  display: inline-block;
+  margin-left: calc( 1.5em * -1 );
+  width: 1.5em;
+}
+
 .blink {
 
 }

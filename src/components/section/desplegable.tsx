@@ -10,6 +10,9 @@ export default ({items, color, backgroundColor}) => {
                 items.map((item, index) => <button className="block w-full" onClick={() => setSelected(index)} style={{backgroundColor: selected == index ? color : backgroundColor, color: selected == index ? backgroundColor : color}}>{item.key}</button>)
             }
         </div>
-        <div className="w-3/4 p-4">{items[selected].value}</div>
+        <div className="w-3/4 p-4">
+            <h3>{items[selected].key}</h3>
+            <p className="font-mono">{items[selected].value}</p>
+        </div>
     </div>)
 }
