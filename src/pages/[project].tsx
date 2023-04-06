@@ -354,7 +354,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
               onTransition || !splineEnabled ? <div className='w-full h-full' style={tvEffect}></div> : <></>
             }
             {
-              onTransition ? <></> : <Spline scene={project.spline} onLoad={splineLoaded} hidden={!splineEnabled}/>
+              onTransition ? <></> : <Spline scene={project.spline} video={project.video} onLoad={splineLoaded} hidden={!splineEnabled}/>
             }
           </div>
           <div className='row-start-1 row-end-5 col-start-7 col-end-9 overflow-hidden'>

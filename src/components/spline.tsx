@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Spline from "@splinetool/react-spline";
 
 import ReactDOM from 'react-dom';
@@ -10,7 +10,7 @@ let xPosition = null
 let target = null
 let splineClickTimeout = null
 
-export default function ({scene, onLoad, onItemSelected, hidden}) {
+export default function ({scene, video, onLoad, onItemSelected, hidden}) {
 
     let container3d = document.querySelector(".container3d")
     let rect = container3d?.getBoundingClientRect()
@@ -20,6 +20,10 @@ export default function ({scene, onLoad, onItemSelected, hidden}) {
         backgroundBlendMode: "difference",
         animation: "b .2s infinite alternate"
       })
+
+    useEffect(() => {
+        console.log("SPLINE START")
+    }, [])
 
     function onMouseDown(e) {
         onItemSelected(e.target.name)
@@ -57,7 +61,10 @@ export default function ({scene, onLoad, onItemSelected, hidden}) {
         
         return ReactDOM.createPortal(
             <div className="spline-container fixed" style={{ top: rect?.y - 40, left: xPosition, width, height, clipPath: "polygon(15% 0%, 91% 0%, 99% 100%, 0% 100%)", visibility: hidden ? "hidden" : "visible" }}>
-                <Spline scene={scene} onLoad={onLoad} onMouseDown={onMouseDown} onMouseHover={onHover}></Spline>
+                {
+                    !video ? <Spline scene={scene} onLoad={onLoad} onMouseDown={onMouseDown} onMouseHover={onHover}></Spline>
+                    : <video src={video} autoPlay muted loop></video>
+                }
             </div>
         , document.querySelector(".crt"))
     }

@@ -84,6 +84,9 @@
     },
     "spline": {
       "type": "string"
+    },
+    "video": {
+      "type": "string"
     }
   }
 }

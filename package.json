@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev\" \"cd backend && npm run develop\"",
+    "dev": "next dev",
+    "dualdev": "concurrently \"next dev\" \"cd backend && npm run develop\"",
     "build": "next build && next export",
     "start": "next start",
     "lint": "next lint"
