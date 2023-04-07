@@ -1,5 +1,6 @@
 import '@/styles/globals.css'
 import Link from 'next/link'
+import Spline from "@splinetool/react-spline";
 
 import { useRouter } from 'next/router'
 
@@ -31,6 +32,7 @@ import { getStrapiMedia } from '@/api/media'
 import { log } from 'console'
 import hexToFilter from '@/api/color'
 import HoverCard from '@/components/hoverCard'
+import SplineGlobal from '@/components/splineGlobal';
 
 config.autoAddCss = false;
 
@@ -78,12 +80,14 @@ function overTerminal(e) {
 }
 
 const positionElement = (e)=> {
-  const mouseY = e.clientY - 5;
-  const mouseX = e.clientX - 10;
+  const mouseY = e.clientY + 100;
+  const mouseX = e.clientX - 400;
 
-  // const cursor = document.querySelector<HTMLElement>(".cursor")
+  const cursor = document.querySelector<HTMLElement>(".cursor")
 
-  // cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+  if (cursor) {
+    cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+  }
 
 }
 
@@ -96,8 +100,11 @@ function MyApp({ Component, pageProps, projects }) {
   const [onTransition, setTransition] = useState(true)
   const [logoMultiplyColor, setLogoMultiplyColor] = useState("none")
   const [iconList, setIconList] = useState([])
+  const [splineLoaded, setSplineLoaded] = useState(false)
 
   const[started, setStarted] = useState(false)
+
+  const [preloaderFinished, setPreloaderFinished] = useState(false)
 
   const projectSelector = useRef(null)
 
@@ -143,7 +150,7 @@ function MyApp({ Component, pageProps, projects }) {
     window.addEventListener('mousemove', positionElement)
 
     gsap.set("#terminal, .gridmap", {
-      rotateX: 85,
+      rotateX: 35,
       visibility: "hidden"
     })
 
@@ -167,6 +174,7 @@ function MyApp({ Component, pageProps, projects }) {
       },
       delay: 1,
       ease: 'Expo.easeOut',
+      onComplete: () => {setPreloaderFinished(true)}
     })
   }, [])
 
@@ -230,7 +238,10 @@ function MyApp({ Component, pageProps, projects }) {
           rotateX: 35,
           duration: 1,
           ease: "Back.easeOut",
-          onComplete: () => {loaded = true}
+          onComplete: () => {
+            loaded = true
+            setStarted(true)
+          }
         })
         gsap.fromTo(".gridmap", {
           rotateX: 90
@@ -241,7 +252,7 @@ function MyApp({ Component, pageProps, projects }) {
           ease: "Expo.easeOut",
         })
     
-        setStarted(true)
+        // setStarted(true)
     }
 
   let scrollIndex = 4
@@ -336,6 +347,33 @@ function MyApp({ Component, pageProps, projects }) {
 
     }
   }
+
+
+  function itemSelected(itemSelected) {
+    
+    const clickRouting = {
+      "database": "Pantala",
+      "postgresql": "Olimaps",
+      "olimaps": "Olimaps",
+      "awwwards": "Zandbeek",
+      "mongodb": "Olimaps",
+      "zandbeek": "Zandbeek",
+      "trophy": "Zandbeek",
+      "e-commerce": "Pantala",
+      "social_network": "Olimaps",
+      "conversational": "Zandbeek",
+      "typescript": "Olimaps",
+      "nodejs": "Olimaps",
+      "react": "Olimaps",
+      "vuejs-icon": "Olimaps",
+    }
+  
+    console.log("ITEM SELECTED", itemSelected);
+  
+    goToProject(clickRouting[itemSelected])
+    
+  }
+
   return (
     <>
       <title>Andriu Garcia</title>
@@ -372,7 +410,9 @@ function MyApp({ Component, pageProps, projects }) {
             }
           </div>
           <div className='horizon-line w-0 h-2 my-2' style={{ backgroundColor: color }}></div>
-          <button className='start-button pa-2 font-mono font-bold' onClick={() => startApp()} style={{ color, letterSpacing: 0.5 }}> START</button>
+          {
+            <button className='start-button pa-2 font-mono font-bold' onClick={() => startApp()} style={{ color, letterSpacing: 0.5, visibility: splineLoaded ? 'visible' : 'hidden' }}>START</button>
+          }
         </div>
 
         <div id="terminal" className='relative w-full border-8' onClick={(e) => clickTerminal(e)} style={{ borderColor: color, visibility: "hidden", backgroundColor, transform: "rotateX(30deg)", height: "120%", marginTop: "-20vh" }}>
@@ -425,16 +465,17 @@ function MyApp({ Component, pageProps, projects }) {
             </HoverCard>
             }
           </div>
-          <div className="relative ml-20 mt-20" style={{height: 'calc(100% - 5rem)'}}>
+          <div className="relative ml-20 mt-20" style={{height: 'calc(100% - 5rem)', clipPath: "inset(0)"}}>
             <div className='absolute tv-off inset-0 overflow-hidden' style={{ display: "none" }}>
               <div className='tv-off__top absolute top-0 left-0 right-0 w-full h-0' style={{backgroundColor}}></div>
               <div className='tv-off__bottom absolute bottom-0 left-0 right-0 w-full h-0' style={{backgroundColor}}></div>
             </div>
-            {
-              started ? <Component {...pageProps} goToProject={(p) => goToProject(p)} onTransition={onTransition} setTransition={setTransition} nextProject={projects[mod((index+1), projects.length)].attributes}/> : ""
-            }
+              <Component {...pageProps} goToProject={(p) => goToProject(p)} started={started} onTransition={onTransition} setTransition={setTransition} nextProject={projects[mod((index+1), projects.length)].attributes}/>
           </div>
         </div>
+        {
+          preloaderFinished ? <SplineGlobal scene="https://prod.spline.design/ev1KSfFazELDVh4T/scene.splinecode" onLoad={() => {setSplineLoaded(true)}} onItemSelected={(target) => {itemSelected(target)}} hidden={!started || onTransition || project.title !== "ANDRIU GARCIA"}></SplineGlobal> : <></>
+        }
 
 
         {/* <svg className='fixed cursor top-0 left-0 pointer-events-none' style={{ zIndex: 999999 }} width="64" height="64" version="1.1" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">

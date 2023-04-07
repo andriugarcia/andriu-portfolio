@@ -15,6 +15,8 @@ export default function ({scene, video, onLoad, onItemSelected, hidden}) {
     let container3d = document.querySelector(".container3d")
     let rect = container3d?.getBoundingClientRect()
 
+    console.log("HIDDEN", hidden)
+
     const [tvEffect, setTvEffect] = useState({
         background: `repeating-radial-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 50% 0/2500px 2500px, repeating-conic-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 60% 60%/2500px 2500px`,
         backgroundBlendMode: "difference",
@@ -60,10 +62,11 @@ export default function ({scene, video, onLoad, onItemSelected, hidden}) {
 
         
         return ReactDOM.createPortal(
-            <div className="spline-container fixed" style={{ top: rect?.y - 40, left: xPosition, width, height, clipPath: "polygon(15% 0%, 91% 0%, 99% 100%, 0% 100%)", visibility: hidden ? "hidden" : "visible" }}>
+            <div className="spline-container fixed pointer-events-none" style={{ top: rect?.y - 40, left: xPosition, width, height, clipPath: "polygon(15% 0%, 91% 0%, 99% 100%, 0% 100%)", visibility: hidden ? "hidden" : "visible" }}>
                 {
-                    !video ? <Spline scene={scene} onLoad={onLoad} onMouseDown={onMouseDown} onMouseHover={onHover}></Spline>
-                    : <video src={video} autoPlay muted loop></video>
+                    // !video ? <Spline scene={scene} onLoad={onLoad} onMouseDown={onMouseDown} onMouseHover={onHover}></Spline>
+                    // : <video src={video} autoPlay muted loop></video>
+                    !video ? <></> : <video src={video} autoPlay muted loop></video>
                 }
             </div>
         , document.querySelector(".crt"))

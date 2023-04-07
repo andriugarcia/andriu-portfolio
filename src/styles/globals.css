@@ -383,6 +383,19 @@ li:not(.section-item):before {
     transform-origin: 0 100px;
   }
 
+  @keyframes autoRotation {
+    from {
+      transform: rotate(0deg) translate(0%, -30%);
+    }
+    to {
+      transform: rotate(360deg) translate(0%, -30%);
+    }
+  }
+
+  .circleText.autoRotate {
+    animation: autoRotation 5s linear infinite;
+  }
+
   .scrollStatus {
     transition: left 0.5s ease;
   }

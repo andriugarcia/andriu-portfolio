@@ -15,6 +15,8 @@ import FloatingCard from "@/components/floatingCard"
 
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
+import ScrollCursor from '@/components/scroll-cursor';
+
 type Params = {
   params: {
     project: String
@@ -100,7 +102,7 @@ export async function getStaticPaths() {
     }
   }
 
-export default function Home({project, nextProject, color, backgroundColor, goToProject, onTransition, setTransition, ...params}) {
+export default function Home({project, nextProject, color, backgroundColor, goToProject, started, onTransition, setTransition, ...params}) {
 
   console.log(nextProject);
   
@@ -117,6 +119,8 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
     id: 0,
     name: "ABOUT"
   })
+  const [scrollHint, setScrollHint] = useState(false)
+  const [scrollAnimation, setScrollAnimation] = useState(false)
   const [tvEffect, setTvEffect] = useState({
     background: `repeating-radial-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 50% 0/2500px 2500px, repeating-conic-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 60% 60%/2500px 2500px`,
     backgroundBlendMode: "difference",
@@ -130,9 +134,25 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
     stack += tech.attributes.name.toUpperCase() + " // "
   })
 
+  function updateScrollHint(value) {
+    if (value) {
+      setScrollHint(true)
+    } else {
+      if (scrollAnimation) return
+      setScrollAnimation(true)
+      gsap.fromTo(".scroll-cursor", {
+        scale: value ? 0 : 1,
+      }, {
+        scale: value ? 1 : 0,
+        duration: .5,
+        onComplete: () => {
+          setScrollHint(false)
+        }
+      })
+    }
+  }
   
   useEffect(() => {
-    
     setInterval(() => {
       setBlinking(!blinking)
     }, 2000)
@@ -150,6 +170,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
 
   useEffect(() => {
     scrollarea.current.scrollTo(0, 0)
+    setScrollAnimation(false)
     setTvEffect({
       background: `repeating-radial-gradient(${backgroundColor} 0 0.0001%,${color} 0 0.0002%) 50% 0/2500px 2500px, repeating-conic-gradient(${backgroundColor} 0 0.0001%,${color} 0 0.0002%) 60% 60%/2500px 2500px`,
       backgroundBlendMode: "difference",
@@ -203,6 +224,8 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
     const tvOffRect = tvOffElement?.getBoundingClientRect()
     const scrollArea = document.querySelector("#scrollarea")
 
+    updateScrollHint(true)
+
     timeline.to(".tv-off__top, .tv-off__bottom", {
       height: 0,
       duration: 0.5,
@@ -216,6 +239,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
   }, [router.asPath])
   
   let alreadyScrolled = false
+  
   const handleScroll = (event) => {
     const height = event.currentTarget.clientHeight;
     const barHeight = event.currentTarget.scrollHeight;
@@ -251,6 +275,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
 
 
     if(scrollTop > 0) {
+      updateScrollHint(false)
       if (!alreadyScrolled) {
         alreadyScrolled = true
 
@@ -328,14 +353,6 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
   }
 
   function splineLoaded() {
-    const distance = window.innerWidth - document.querySelector("main")?.getBoundingClientRect().right
-    gsap.to(".floatingCard", {
-      right: distance + 200,
-      top: 0.6 * window.innerHeight,
-      zIndex: 20,
-      rotation: -18,
-    })
-
     ScrollTrigger.refresh()
   }
 
@@ -346,15 +363,15 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
         <meta name="description" content={project.description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <main ref={scrollarea} id="scrollarea" className='overflow-y-scroll h-full' style={{ color: color}} onScroll={handleScroll}>
+      <main ref={scrollarea} id="scrollarea" className='overflow-y-scroll h-full' style={{ color: color }} onScroll={handleScroll}>
         <div id="topProject"></div>
         <div className='grid grid-cols-8 grid-rows-6 h-full'>
-          <div className='container3d relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
+          <div className='container3d relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8 pointer-events-none' style={{ borderColor: color }}>
             {
-              onTransition || !splineEnabled ? <div className='w-full h-full' style={tvEffect}></div> : <></>
+              (!started || onTransition || !splineEnabled) ? <div className='w-full h-full' style={tvEffect}></div> : <></>
             }
             {
-              onTransition ? <></> : <Spline scene={project.spline} video={project.video} onLoad={splineLoaded} hidden={!splineEnabled}/>
+              !started || onTransition ? <></> : <Spline scene={project.spline} video={project.video} onLoad={splineLoaded} hidden={!started || !splineEnabled}/>
             }
           </div>
           <div className='row-start-1 row-end-5 col-start-7 col-end-9 overflow-hidden'>
@@ -369,7 +386,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
             }
           </div>
           <div className='row-start-5 row-end-7 col-start-1 col-end-9 border-y-8' style={{ borderColor: color }}>
-            <div className='h-1/3 flex items-center border-b-8' style={{ borderColor: color, backgroundColor: color }}>
+            <div className='relative h-1/3 flex items-center border-b-8' style={{ borderColor: color, backgroundColor: color, zIndex: 2 }}>
             <Marquee className='marquee' gradient={false} speed={40} style={{color: backgroundColor, fontSize: '56px'}}>{onTransition ? "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" : stack}</Marquee>
             </div>
             <div className='h-2/3 pl-10 flex items-center' style={{ borderColor: color }} >
@@ -487,8 +504,13 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
             </div>
           </div>
         }
-        <FloatingCard project={project} color={color} backgroundColor={backgroundColor}></FloatingCard>
+        {
+          started ? <FloatingCard project={project} color={color} backgroundColor={backgroundColor}></FloatingCard> : <></>
+        }
       </main>
+      {
+        // scrollHint ? <ScrollCursor color={color} backgroundColor={backgroundColor}></ScrollCursor> : <></>
+      }
     </>
   )
 }

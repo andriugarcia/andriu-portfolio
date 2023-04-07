@@ -1,7 +1,21 @@
+import { useEffect } from "react";
 import ReactDOM from "react-dom";
 import Marquee from "react-fast-marquee";
+import { gsap } from "gsap";
+import { useRouter } from "next/router";
 
 export default function({project, color, backgroundColor}) {
+    console.log("Floating Card started");
+    const router = useRouter()
+    useEffect(() => {
+        const distance = window.innerWidth - document.querySelector("main")?.getBoundingClientRect().right
+        gsap.to(".floatingCard", {
+          right: distance -100,
+          top: 0.6 * window.innerHeight,
+          zIndex: 20,
+          rotation: -18,
+        })
+    }, [router.asPath])
 
     if (typeof window === "object") {
         return ReactDOM.createPortal(

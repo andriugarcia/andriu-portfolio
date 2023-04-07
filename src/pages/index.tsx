@@ -53,7 +53,7 @@ type Params = {
     }
   }
 
-export default function Home({project, categories, color, backgroundColor, goToProject, onTransition, setTransition, ...params}) {
+export default function Home({project, categories, color, backgroundColor, goToProject, started, onTransition, setTransition, ...params}) {
   const router = useRouter() 
   const [tvEffect, setTvEffect] = useState({
     background: `repeating-radial-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 50% 0/2500px 2500px, repeating-conic-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 60% 60%/2500px 2500px`,
@@ -95,38 +95,7 @@ export default function Home({project, categories, color, backgroundColor, goToP
   const [content, setContent] = useState({})
 
 
-  function itemSelected(itemSelected) {
-    
-    const clickRouting = {
-      "database": "Pantala",
-      "postgresql": "Olimaps",
-      "olimaps": "Olimaps",
-      "awwwards": "Zandbeek",
-      "mongodb": "Olimaps",
-      "zandbeek": "Zandbeek",
-      "trophy": "Zandbeek",
-      "e-commerce": "Pantala",
-      "social_network": "Olimaps",
-      "conversational": "Zandbeek",
-      "typescript": "Olimaps",
-      "nodejs": "Olimaps",
-    }
-
-    console.log("ITEM SELECTED", itemSelected);
-
-    goToProject(clickRouting[itemSelected])
-    
-  }
-
   function splineLoaded(spline) {
-
-    const distance = window.innerWidth - document.querySelector("main")?.getBoundingClientRect().right
-    gsap.to(".floatingCard", {
-      right: distance -100,
-      top: 0.6 * window.innerHeight,
-      zIndex: 20,
-      rotation: -18,
-    })
 
     ScrollTrigger.refresh()
   }
@@ -144,7 +113,8 @@ export default function Home({project, categories, color, backgroundColor, goToP
           <div className='container3d relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8' style={{ borderColor: color }}>
             {
               // onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Assistant categories={categories} highlightsUpdate={highlightsUpdate}></Assistant>
-              onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Spline scene={project.spline} onLoad={splineLoaded} onItemSelected={itemSelected}/>
+              // onTransition ? <div className='w-full h-full' style={tvEffect}></div> : <Spline scene={project.spline} onLoad={splineLoaded} onItemSelected={itemSelected} hidden={!started}/>
+              (!started || onTransition) ? <div className='w-full h-full' style={tvEffect}></div> : <></>
             }
           </div>
           <div className='row-start-1 row-end-5 col-start-7 col-end-9 overflow-hidden'>
@@ -171,7 +141,9 @@ export default function Home({project, categories, color, backgroundColor, goToP
             </div>
           </div>
         </div>
-        <FloatingCard project={{ title: "ABOUT ME", description: project.description }} color={color} backgroundColor={backgroundColor}></FloatingCard>
+        {
+          started ? <FloatingCard project={{ title: "ABOUT ME", description: project.description }} color={color} backgroundColor={backgroundColor}></FloatingCard> : <></>
+        }
       </main>
     </>
   )
