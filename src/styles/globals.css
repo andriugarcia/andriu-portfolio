@@ -411,6 +411,19 @@ li:not(.section-item):before {
     animation: blink 1s step-end infinite;
   }
 
+  @keyframes loading-line {
+    from {
+      width: 0%;
+    }
+    to {
+      width: 100%;
+    }
+  }
+
+  .horizon-loading-line {
+    animation: loading-line 2s ease 0 infinite;
+  }
+
   @keyframes blink {
     from,
     to {

@@ -225,6 +225,12 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
     const scrollArea = document.querySelector("#scrollarea")
 
     updateScrollHint(true)
+    
+    gsap.to(".projectOverlay", {
+      opacity: 0,
+      duration: 0.05,
+      // ease: "Expo.easeIn"
+    })
 
     timeline.to(".tv-off__top, .tv-off__bottom", {
       height: 0,
@@ -364,6 +370,7 @@ export default function Home({project, nextProject, color, backgroundColor, goTo
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main ref={scrollarea} id="scrollarea" className='overflow-y-scroll h-full' style={{ color: color }} onScroll={handleScroll}>
+        <div className='projectOverlay absolute inset-0 pointer-events-none' style={{ backgroundColor: color, zIndex: 20, opacity: 0 }}></div>
         <div id="topProject"></div>
         <div className='grid grid-cols-8 grid-rows-6 h-full'>
           <div className='container3d relative row-start-1 row-end-5 col-start-1 col-end-7 border-r-8 pointer-events-none' style={{ borderColor: color }}>

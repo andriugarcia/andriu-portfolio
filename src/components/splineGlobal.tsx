@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import Spline from "@splinetool/react-spline";
+import React, { Suspense, useEffect, useState } from 'react';
+import Spline from '@splinetool/react-spline';
 
 let width = null
 let height = null
@@ -8,29 +8,14 @@ let yPosition = null
 
 let target = null
 let splineClickTimeout = null
+let rect = null
 
+function onMouseDown(e) {
+    console.log(e.target.name);
+    
+    onItemSelected(e.target.name)
+}
 export default function ({scene, onLoad, onItemSelected, hidden}) {
-
-    const [tvEffect, setTvEffect] = useState({
-        background: `repeating-radial-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 50% 0/2500px 2500px, repeating-conic-gradient(#000 0 0.0001%,#FFF 0 0.0002%) 60% 60%/2500px 2500px`,
-        backgroundBlendMode: "difference",
-        animation: "b .2s infinite alternate"
-    })
-
-    let rect = null
-    
-    function onMouseDown(e) {
-        console.log(e.target.name);
-        
-        onItemSelected(e.target.name)
-    }
-
-    function onMouseMove() {
-    }
-
-    function onHover(e) {
-    }
-    
     useEffect(() => {
         let container3d = document.querySelector(".container3d")
         console.log("CONTAINER3D", document.querySelector(".container3d"));
@@ -62,12 +47,10 @@ export default function ({scene, onLoad, onItemSelected, hidden}) {
         height = rect?.height
 
     }, [])
-        
-    console.log(scene, onLoad, onMouseDown, onHover);
     
         return (
             <div className="spline-container fixed" style={{ top: yPosition, left: xPosition, width, height, clipPath: "polygon(15% 0%, 91% 0%, 99% 100%, 0% 100%)", visibility: hidden ? "hidden" : "visible" }}>
-                <Spline scene={scene} onLoad={onLoad} onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseHover={onHover}></Spline>
+                <Spline scene={scene} onLoad={onLoad} onMouseDown={onMouseDown}></Spline>
             </div>
         )
 

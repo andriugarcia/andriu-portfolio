@@ -19,6 +19,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
+import * as gtag from "gtag"
+
 gsap.registerPlugin(ScrollTrigger);
 
 import {
@@ -33,6 +35,7 @@ import { log } from 'console'
 import hexToFilter from '@/api/color'
 import HoverCard from '@/components/hoverCard'
 import SplineGlobal from '@/components/splineGlobal';
+import Script from 'next/script';
 
 config.autoAddCss = false;
 
@@ -92,6 +95,9 @@ const positionElement = (e)=> {
 }
 
 function MyApp({ Component, pageProps, projects }) {
+
+  console.log("RENDER", Component, pageProps, projects)
+
   const [backgroundColor, setBackgroundColor] = useState("")
   const [color, setColor] = useState("")
   const [isMobile, setMobile] = useState(false)
@@ -124,6 +130,17 @@ function MyApp({ Component, pageProps, projects }) {
     }
   }
 
+  // Google Analytics Set Up
+  useEffect(() => {
+    const handleRouteChange = url => {
+      gtag.pageview(url)
+    }
+    router.events.on("routeChangeComplete", handleRouteChange)
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange)
+    }
+  }, [router.events])
+
   useEffect(() => {
     const startingPosition = index !== -1 ? index : 0
 
@@ -152,29 +169,6 @@ function MyApp({ Component, pageProps, projects }) {
     gsap.set("#terminal, .gridmap", {
       rotateX: 35,
       visibility: "hidden"
-    })
-
-    gsap.fromTo(".horizon-line", {
-      width: 0
-    }, {
-      width: "100%",
-      duration: 1,
-      delay: 0.5,
-      ease: "Expo.easeOut"
-    })
-    
-    gsap.fromTo('.preloader-char', {
-      yPercent: 110
-    }, {
-      yPercent: 0,
-      duration: 1,
-      stagger: {
-        from: "center",
-        amount: 0.2
-      },
-      delay: 1,
-      ease: 'Expo.easeOut',
-      onComplete: () => {setPreloaderFinished(true)}
     })
   }, [])
 
@@ -255,6 +249,31 @@ function MyApp({ Component, pageProps, projects }) {
         // setStarted(true)
     }
 
+  function updateSplineState() {
+    setSplineLoaded(true)
+    gsap.fromTo(".horizon-line", {
+      width: 0
+    }, {
+      width: "100%",
+      duration: 1,
+      delay: 0.5,
+      ease: "Expo.easeOut"
+    })
+    
+    gsap.fromTo('.preloader-char', {
+      yPercent: 110
+    }, {
+      yPercent: 0,
+      duration: 1,
+      stagger: {
+        from: "center",
+        amount: 0.2
+      },
+      delay: 1,
+      ease: 'Expo.easeOut'
+    })
+  }
+
   let scrollIndex = 4
 
   function goToProject(project, indexTarget = -1) {
@@ -328,11 +347,17 @@ function MyApp({ Component, pageProps, projects }) {
       })
 
       const timeline = gsap.timeline()
+      const timelineBackground = gsap.timeline()
       const tvOffElement = document.querySelector(".tv-off")
       const tvOffRect = tvOffElement?.getBoundingClientRect()
       const scrollArea = document.querySelector("#scrollarea")
 
       if (scrollArea && scrollArea.scrollTop > 50) {
+        timelineBackground.to(".projectOverlay", {
+          opacity: 1,
+          duration: 0.05,
+          // ease: "Expo.easeIn"
+        })
         timeline.set(".tv-off", {
           zIndex: 5000,
           display: "initial",
@@ -376,6 +401,24 @@ function MyApp({ Component, pageProps, projects }) {
 
   return (
     <>
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${gtag.GA_TRACKING_ID}`}
+      />
+      <Script
+        id="gtag-init"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${gtag.GA_TRACKING_ID}', {
+              page_path: window.location.pathname,
+            });
+          `,
+        }}
+      />
       <title>Andriu Garcia</title>
       <div className={`crt h-[100vh] p-10 ${league.variable} overflow-hidden flex justify-center`} style={ scrollbarStyle } onMouseMove={(e) => overTerminal(e)}>
         {
@@ -404,15 +447,19 @@ function MyApp({ Component, pageProps, projects }) {
 
 
         <div className='preloader fixed top-[50%] left-0 right-0 w-full flex flex-col items-center' style={{ transform: "translateY(-50%)" }}>
-          <div className='overflow-hidden text-4xl font-black uppercase flex' style={{ color }}>
-            {
-              "ADDING A NEW PERSPECTIVE TO WEB DEVELOPMENT".split("").map((char: String) => (<div className='preloader-char' style={{marginRight: char == ' ' ? "12px" : "0"}}>{char}</div>))
-            }
-          </div>
-          <div className='horizon-line w-0 h-2 my-2' style={{ backgroundColor: color }}></div>
           {
-            <button className='start-button pa-2 font-mono font-bold' onClick={() => startApp()} style={{ color, letterSpacing: 0.5, visibility: splineLoaded ? 'visible' : 'hidden' }}>START</button>
+            splineLoaded ? 
+            <div className='overflow-hidden text-4xl font-black uppercase flex' style={{ color }}>
+              {
+                "ADDING A NEW PERSPECTIVE TO WEB DEVELOPMENT".split("").map((char: String) => (<div className='preloader-char' style={{marginRight: char == ' ' ? "12px" : "0"}}>{char}</div>))
+              }
+            </div> : <></>
           }
+          {
+            splineLoaded ? <div className='horizon-line w-0 h-2 my-2' style={{ backgroundColor: color }}></div> :
+            <div className='horizon-loading-line w-0 h-2 my-2' style={{ backgroundColor: color }}></div>
+          }
+          <button className='start-button pa-2 font-mono font-bold' onClick={() => startApp()} style={{ color, letterSpacing: 0.5, visibility: splineLoaded ? 'visible' : 'hidden' }}>START</button>
         </div>
 
         <div id="terminal" className='relative w-full border-8' onClick={(e) => clickTerminal(e)} style={{ borderColor: color, visibility: "hidden", backgroundColor, transform: "rotateX(30deg)", height: "120%", marginTop: "-20vh" }}>
@@ -474,7 +521,7 @@ function MyApp({ Component, pageProps, projects }) {
           </div>
         </div>
         {
-          preloaderFinished ? <SplineGlobal scene="https://prod.spline.design/ev1KSfFazELDVh4T/scene.splinecode" onLoad={() => {setSplineLoaded(true)}} onItemSelected={(target) => {itemSelected(target)}} hidden={!started || onTransition || project.title !== "ANDRIU GARCIA"}></SplineGlobal> : <></>
+          <SplineGlobal scene="https://prod.spline.design/ev1KSfFazELDVh4T/scene.splinecode" onLoad={() => {updateSplineState()}} onItemSelected={(target) => {itemSelected(target)}} hidden={!started || onTransition || project.title !== "ANDRIU GARCIA"}></SplineGlobal>
         }
 
 
